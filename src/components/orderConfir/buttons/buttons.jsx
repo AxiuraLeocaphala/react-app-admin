@@ -1,16 +1,23 @@
-const Buttons = ({ orderId, userId, handleRejectAccept }) => {
-    const handleClickBtnReject = () => {
-        handleRejectAccept(orderId, userId, "reject")
-    }
+import { webSocket } from "../../../request/wsAdminPanel"
 
-    const handleClickBtnAccept = () => {
-        handleRejectAccept(orderId, userId, "accept")
+const Buttons = ({ order }) => {
+    const handleClickBtn = (e) => {
+        let action;
+        e.target.className === "reject" ? (action = "reject") : (action = "accept");
+        webSocket.send(
+            JSON.stringify({
+                contentType: "rejectAcceptOrder",
+                orderId: order["OrderId"], 
+                userId: order["UserId"], 
+                action: action
+            })
+        );
     }
 
     return (
         <div className="buttons-space">
-            <button onClick={handleClickBtnReject}>Отклонить</button>
-            <button onClick={handleClickBtnAccept}>Принять</button>
+            <button className="reject" onClick={handleClickBtn}>Отклонить</button>
+            <button className="accept" onClick={handleClickBtn}>Принять</button>
         </div>
     )
 }

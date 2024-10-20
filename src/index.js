@@ -4,7 +4,8 @@ import { createBrowserRouter, RouterProvider, redirect } from 'react-router-dom'
 import Authenticate from './components/authenticate/authenticate';
 import AdminPanel from './components/adminpanel/adminpanel';
 import ErrorElement from './components/ErrorElement/ErrorElement';
-import { getCookie, setCookie } from './other/cookie';
+import { getCookie } from './other/cookie';
+import {VisibilityProvider} from "./components/orderADelivery/button/other/context"
 import "./App.css";
 
 const router = createBrowserRouter([
@@ -22,7 +23,7 @@ const router = createBrowserRouter([
 	},
 	{
 		path: "/adminpanel",
-		element: <AdminPanel/>,
+		element: <VisibilityProvider><AdminPanel/></VisibilityProvider>,
 		errorElement: <ErrorElement/>,
 		loader: async () => {
 			if (!getCookie('accessToken') && !getCookie('refreshToken')) {

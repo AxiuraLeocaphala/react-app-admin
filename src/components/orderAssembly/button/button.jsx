@@ -1,8 +1,15 @@
+import { webSocket } from "../../../request/wsAdminPanel"
 import "./button.css"
 
-const Button = ({ orderId, userId, handleAssemblyOrder }) => {
+const Button = ({ order }) => {
     const handleClickBtn = () => {
-        handleAssemblyOrder(orderId, userId)
+        webSocket.send(
+            JSON.stringify({
+                contentType: "completedOrder",
+                orderId: order["OrderId"],
+                userId: order["UserId"]
+            })
+        )
     } 
 
     return (

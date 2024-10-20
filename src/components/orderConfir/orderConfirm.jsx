@@ -1,7 +1,7 @@
 import Buttons from "./buttons/buttons"
 import "./orderConfirm.css";
 
-const OrderConfirm = ({ order, handleRejectAccept }) => {
+const OrderConfirm = ({ order }) => {
     return (
         <div className="order confirm">
             <table>
@@ -21,11 +21,7 @@ const OrderConfirm = ({ order, handleRejectAccept }) => {
                     })}
                 </tbody>
             </table>
-            <Buttons
-                orderId={order["OrderId"]}
-                userId={order["UserId"]}
-                handleRejectAccept={handleRejectAccept}
-            />
+            <Buttons order={order}/>
         </div>
     )
 }

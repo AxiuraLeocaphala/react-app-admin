@@ -2,7 +2,7 @@ import {useRef} from 'react';
 import Button from "./button/button";
 import "./orderAssembly.css";
 
-const OrderAssembly = ({ order, columnRef, handleAssemblyOrder }) => {
+const OrderAssembly = ({ order, columnRef }) => {
     const tableRef = useRef(null);
 
     const handleClickTable = () => {
@@ -32,11 +32,7 @@ const OrderAssembly = ({ order, columnRef, handleAssemblyOrder }) => {
                     })}
                 </tbody>
             </table>
-            <Button
-            orderId={order["OrderId"]}
-            userId={order["UserId"]}
-            handleAssemblyOrder={handleAssemblyOrder}
-            />
+            <Button order={order}/>
         </div>
     )
 }
