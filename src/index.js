@@ -33,7 +33,10 @@ const router = createBrowserRouter([
 			}
 		}
 	}
-])
+	],{
+		basename: "/meridian/admin"
+	}
+)
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

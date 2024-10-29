@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { webSocket } from "../../request/wsAdminPanel";
+import { useEffect, useRef, useState} from "react";
+import { webSocket } from "../../../request/wsAdminPanel";
 import "./popupCheckCodeReceive.css";
 
 const PopupCheckCodeReceive = ({ 
@@ -12,8 +12,10 @@ const PopupCheckCodeReceive = ({
     }) => {
     const overlayRef = useRef(null);
     const inputRef = useRef(null);
+    const [positionOverlay, setPositionOverlay] = useState(null)
 
     useEffect(() => {
+        setPositionOverlay(colADeliveryRef.current.scrollTop);
         colADeliveryRef.current.style.overflow = "hidden";
         setTimeout(() => {overlayRef.current.classList.remove('hide')}, 50) 
         setTimeout(() => {
@@ -35,7 +37,6 @@ const PopupCheckCodeReceive = ({
     const handleClickBtn = () => {
         inputRef.current.blur()
         if (inputRef.current.value) {
-            console.log(inputRef.current.value);
             webSocket.send(JSON.stringify({
                 "contentType": "checkCodeReceive",
                 "codeReceive": inputRef.current.value
@@ -47,7 +48,7 @@ const PopupCheckCodeReceive = ({
     }
 
     return (
-        <div ref={overlayRef} className="overlay hide">
+        <div ref={overlayRef} className="overlay hide" style={{top: `${positionOverlay}px`}}>
             <div className="popupCheckCodeReceive">
                 <h4>Введите код для получения</h4>
                 <div className="input-wrapper">

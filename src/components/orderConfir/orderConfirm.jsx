@@ -12,10 +12,10 @@ const OrderConfirm = ({ order }) => {
                     </tr>
                     {order.Products.map((product, id) => {
                         return (
-                            <tr key={id}>
+                            <tr key={id} className="row-product">
                                 <td className="product-quantity">{product["Quantity"]}</td>
                                 <td className="product-name" colSpan={1}>{product["ProductName"]}</td>
-                                <td className="table-void"></td>
+                                <td className="product-price">{product["ProductPrice"]} ₽</td>
                             </tr>
                         )
                     })}

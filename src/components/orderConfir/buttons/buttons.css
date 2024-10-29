@@ -1,0 +1,23 @@
+.order.confirm {
+    .btn-space {
+        position: relative;
+        button {
+            position: absolute;
+            width: 49%;
+        }
+        button.reject {
+            left: 0;
+            color: red;
+            background-color: rgb(50, 0, 0);
+        }
+        button.accept {
+            right: 0;
+            color: green;
+            background-color: rgba(0, 50, 0);
+        }
+        button.active {
+            width: 65%;
+            z-index: 2;
+        }
+    }
+}

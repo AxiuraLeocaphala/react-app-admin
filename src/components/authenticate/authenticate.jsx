@@ -24,7 +24,6 @@ const Authenticate = () => {
 
     useEffect(() => {
         document.documentElement.setAttribute("data-theme", currentThem())
-
         const root = document.documentElement;
         setBgPrimary(getComputedStyle(root).getPropertyValue('--background-primary'));
         setColPrimary(getComputedStyle(root).getPropertyValue('--color-primary'));
@@ -44,6 +43,7 @@ const Authenticate = () => {
                     labelRef.current.style.borderColor = `#ffffff`;
                 })
             } else if (data.stat === true) {
+                webSocket.send(JSON.stringify({"contentType": "close"}))
                 setCookie("accessToken", data.accessToken, {'max-age': 14400});
                 setCookie("refreshToken", data.refreshToken, {'max-age': 14400});
                 navigate('/adminpanel');
@@ -57,12 +57,13 @@ const Authenticate = () => {
     }
 
     webSocket.onopen = e => {
+        webSocket.send(JSON.stringify({"contentType": "qr"}));
         setWsOpen(true);
     }
 
     const handleClickOnToggle = () => {
         setPasswordVisible(!passwordVisible);
-        inputRef.current.type = inputRef.current.type === "password" ? ("test"):("password")
+        inputRef.current.type = inputRef.current.type === "password" ? ("text"):("password")
     }
 
     const onFocusInput = () => {
@@ -86,7 +87,7 @@ const Authenticate = () => {
     }
 
     const onClickBtn = () => {
-        webSocket.send(inputRef.current.value)
+        webSocket.send(JSON.stringify({"contentType": "2FA", "code": inputRef.current.value}))
     }
 
     if (wsOpen) {
@@ -113,8 +114,8 @@ const Authenticate = () => {
                                     }
                                 ]}
                                 
-                                fgColor={colPrimary}
-                                bgColor={bgPrimary}
+                                fgColor="#FFF"
+                                bgColor="#000"
                                 qrStyle="dots"
                             />
                         </div>

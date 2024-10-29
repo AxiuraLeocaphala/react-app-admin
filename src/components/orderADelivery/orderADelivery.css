@@ -1,0 +1,18 @@
+.order.awaiting-delivery {
+    .order-id {
+        background-color: #86112E;
+    }
+    .order-payment-method {
+        background-color: #4D3347;
+    }
+    .table-void {
+        border-top: 1px solid #ffffff;
+        border-right: 1px solid #ffffff;
+        text-align: right;
+        padding-right: 10px;
+    }
+    .total-price {
+        text-align: center;
+        border-top: 1px solid #ffffff;
+    }
+}

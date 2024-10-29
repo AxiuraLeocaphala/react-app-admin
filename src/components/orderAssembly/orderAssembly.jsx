@@ -5,11 +5,13 @@ import "./orderAssembly.css";
 const OrderAssembly = ({ order, columnRef }) => {
     const tableRef = useRef(null);
 
-    const handleClickTable = () => {
-        const activeTable = columnRef.current.querySelector(".active");
-        activeTable && (activeTable.classList.remove("active"));
-        tableRef.current.classList.add("active");
-        // По ws сообщить всем о выделении заказа
+    const handleClickTable = (e) => {
+        if (e.target.closest('.btn-space') === null) {
+            const activeTable = columnRef.current.querySelector("table.active");
+            activeTable && (activeTable.classList.remove("active"));
+            tableRef.current.classList.add("active");
+            // По ws сообщить всем о выделении заказа
+        }
     }
 
     return (
@@ -24,7 +26,7 @@ const OrderAssembly = ({ order, columnRef }) => {
                     </tr>
                     {order.Products.map((product, id) => {
                         return (
-                            <tr key={id}>
+                            <tr key={id} className="row-product">
                                 <td className="product-quantity">{product["Quantity"]}</td>
                                 <td className="product-name" colSpan={1}>{product["ProductName"]}</td>
                             </tr>

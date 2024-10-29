@@ -11,14 +11,14 @@ import CameraSVGBlack from "./../../other/picture/Camera-black.svg";
 import CameraSVGWhite from "./../../other/picture/Camera-white.svg";
 import PasswordSVGBlack from "./../../other/picture/Password-black.svg";
 import PasswordSVGWhite from "./../../other/picture/Password-white.svg";
-import PopupCheckCodeReceive from "../popup/popupCheckCodeReceive";
+import PopupCheckCodeReceive from "../popup/CheckCodeReceive/popupCheckCodeReceive";
 import { useVisibility} from "../orderADelivery/button/other/context";
 import "./style/selectWorkspace.css";
 import "./style/adminpanel.css";
 import "./style/commonOrder.css";
 
 const AdminPanel = () => {
-    const [view, setView] = useState();
+    const [view, setView] = useState("GeneralView");
     const timerRef = useRef(null);
     const [listOrders, setListOrders] = useState(null);
     const columnAssemblyRef = useRef(null);
@@ -26,10 +26,10 @@ const AdminPanel = () => {
     const [PasswordSVG, setPasswordSVG] = useState(null);
     const [popupIsShow, setPopupIsShow] = useState(false);
     const colADeliveryRef = useRef(null);
-    const [widthHeader, setWidthHeader] = useState();
     const { setComponentVisibility } = useVisibility();
-    const [errMsgShow, setErrMsgShow] = useState(false);
-    const [errMsg, setErrMsg] = useState(null);
+    const [errMsgShow, setErrMsgShow] = useState(false); // awaitingDelivery
+    const [errMsg, setErrMsg] = useState(null); // awaitingDelivery
+    const orderListADelivedy = useRef(null);
     const MemorisedOrderConfirm = memo(OrderConfirm);
     const MemoriesOrderAssembly = memo(OrderAssembly);
     const MemoriesOrderADelivery = memo(OrderADelivery); 
@@ -57,11 +57,24 @@ const AdminPanel = () => {
             case "listOrders":
                 setListOrders(req);
                 break;
+            case "newOrder":
+                setListOrders(prevListOrders => {
+                    const updateConfirmation = [
+                        ...prevListOrders.oConfirmation,
+                        req.data.newOrder
+                    ]
+                    
+                    return{
+                        ...prevListOrders,
+                        oConfirmation: updateConfirmation
+                    }
+                })
+                break
             case "rejectAcceptOrder":
-                if (req.action === "reject") {
+                if (req.data.action === "reject") {
                     setListOrders(prevListOrders => {
                         const updateConfirmation = prevListOrders.oConfirmation.filter(order => {
-                            if (order["OrderId"] === req.orderId && order["UserId"] === req.userId) {
+                            if (order["OrderId"] === req.data.orderId && order["UserId"] === req.data.userId) {
                                 return false;
                             }
                             return true;
@@ -72,10 +85,10 @@ const AdminPanel = () => {
                             oConfirmation: updateConfirmation
                         }
                     })
-                } else if (req.action === "accept") {
+                } else if (req.data.action === "accept") {
                     setListOrders(prevListOrders => {
                         const updateConfirmation = prevListOrders.oConfirmation.filter(order => {
-                            if (order["OrderId"] === req.orderId && order["UserId"] === req.userId) {
+                            if (order["OrderId"] === req.data.orderId && order["UserId"] === req.data.userId) {
                                 return false;
                             }
                             return true;
@@ -84,7 +97,7 @@ const AdminPanel = () => {
                         const updateAssembly = [
                             ...prevListOrders.oAssembly,
                             ...prevListOrders.oConfirmation.filter(order => 
-                                order["OrderId"] === req.orderId && order["UserId"] === req.userId
+                                order["OrderId"] === req.data.orderId && order["UserId"] === req.data.userId
                             ).map(order =>({
                                 ...order,
                                 Status: "assembly"
@@ -102,13 +115,13 @@ const AdminPanel = () => {
             case "completedOrder":
                 setListOrders(prevListOrders => {
                     const updateAssembly = prevListOrders.oAssembly.filter(order => 
-                        !(order["OrderId"] === req.orderId && order["UserId"] === req.userId)
+                        !(order["OrderId"] === req.data.orderId && order["UserId"] === req.data.userId)
                     );
     
                     const updateADelivery = [
                         ...prevListOrders.ADelivery,
                         ...prevListOrders.oAssembly.filter(order => 
-                            order["OrderId"] === req.orderId && order["UserId"] === req.userId 
+                            order["OrderId"] === req.data.orderId && order["UserId"] === req.data.userId 
                         ).map(order => ({
                             ...order,
                             Status: "Adelivery"
@@ -128,11 +141,11 @@ const AdminPanel = () => {
                     setTimeout(() => {
                         setPopupIsShow(false);
                         const targetOrder = document.getElementById(req.orderId);
-                        colADeliveryRef.current.scrollTo({
+                        orderListADelivedy.current.scrollTo({
                             top: targetOrder.offsetTop - 60,
                             behavior: 'smooth'
                         })
-                        setComponentVisibility(req.orderId, true)
+                        setComponentVisibility(req.orderId, true);
                     }, 50)
                 } else {
                     setErrMsg(`${req.errorMessage}`);
@@ -142,7 +155,7 @@ const AdminPanel = () => {
             case "orderIssued":
                 setListOrders(prevListOrders => {
                     const updateADelivery = prevListOrders.ADelivery.filter(order => {
-                        if (order["OrderId"] === req.orderId && order["UserId"] === req.userId) {
+                        if (order["OrderId"] === req.data.orderId && order["UserId"] === req.data.userId) {
                             return false;
                         }
                         return true;
@@ -153,7 +166,7 @@ const AdminPanel = () => {
                         ADelivery: updateADelivery
                     }
                 })
-                break;
+                break
         }
     }
 
@@ -162,11 +175,9 @@ const AdminPanel = () => {
             if (e.target.className === "GeneralView") {
                 QualifierError("It is not possible to open the general view on the phone");
             } else {
-                setWidthHeader({width: '100%'})
                 setView(e.target.className);
             }
         } else {
-            setWidthHeader({width: 'calc(33% - 1rem)'})
             setView(e.target.className);
         }
     }
@@ -198,8 +209,8 @@ const AdminPanel = () => {
                 <div  className="main">
                     {["Confirm", "GeneralView"].includes(view) && (
                         <div className="column">
-                            <div className="column-header" style={widthHeader}>
-                                <div className="header-top">
+                            <div className="column-header">
+                                <div className="header-top first">
                                     Ожидают принятия
                                     <div className="order-counter">
                                         {listOrders.oConfirmation.length}
@@ -216,13 +227,12 @@ const AdminPanel = () => {
                                     )
                                 })}
                             </div>
-                            
                         </div>
                     )}
                     {["Assembly", "GeneralView"].includes(view) && (
                         <div className="column" ref={columnAssemblyRef}>
-                            <div className="column-header" style={widthHeader}>
-                                <div className="header-top">
+                            <div className="column-header">
+                                <div className="header-top second">
                                     В сборке 
                                     <div className="order-counter">
                                         {listOrders.oAssembly.length}
@@ -244,15 +254,15 @@ const AdminPanel = () => {
                     )}
                     {["ADelivery", "GeneralView"].includes(view) && (
                         <div className="column" ref={colADeliveryRef}>
-                            <div className="column-header" style={widthHeader}>
-                                <div className="header-top">
+                            <div className="column-header">
+                                <div className="header-top third">
                                     Ожидают выдачи 
                                     <div className="order-counter">
                                         {listOrders.ADelivery.length}
                                     </div>
                                 </div>
                             </div>
-                            <div className="header-right" style={widthHeader}>
+                            <div className="header-right">
                                 {UserAgent.isMobile() && (
                                     <div className="wrapper-fringe">
                                         <div className="slide left"></div>
@@ -270,7 +280,7 @@ const AdminPanel = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="order-list">
+                            <div className="order-list" ref={orderListADelivedy}>
                                 {listOrders.ADelivery.map((order) => {
                                     return (
                                         <MemoriesOrderADelivery

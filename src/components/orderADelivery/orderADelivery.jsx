@@ -1,7 +1,17 @@
 import Button from "./button/button";
+import { useVisibility } from "./button/other/context";
 import "./orderADelivery.css";
 
-const OrderADelivery = ({ order }) => {
+const OrderADelivery = ({ order, isTarget }) => {
+    const {visibilityState} = useVisibility();
+    const isVisible = visibilityState[order["OrderId"]] || false;
+
+    const countTotalPrice = () => {
+        let total = 0;
+        order.Products.forEach(product => total += product["ProductPrice"])
+        return total
+    }
+
     return (
         <div className="order awaiting-delivery" id={order["OrderId"]}>
             <table>
@@ -12,13 +22,19 @@ const OrderADelivery = ({ order }) => {
                     </tr>
                     {order.Products.map((product, id) => {
                         return (
-                            <tr key={id}>
+                            <tr key={id} className="row-product">
                                 <td className="product-quantity">{product["Quantity"]}</td>
                                 <td className="product-name" colSpan={1}>{product["ProductName"]}</td>
-                                <td className="table-void"></td>
+                                <td className="product-price">{product["ProductPrice"]} ₽</td>
                             </tr>
                         )
                     })}
+                    {isVisible && (
+                        <tr>
+                            <td className="table-void" colSpan={2}>Итого: </td>
+                            <td className="total-price">{countTotalPrice()} ₽</td>
+                        </tr>
+                    )}
                 </tbody>
             </table>
             <Button order={order}/>

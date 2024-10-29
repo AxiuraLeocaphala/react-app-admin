@@ -1,11 +1,12 @@
 .order.confirm {
     table {
         .order-id {
-            background-color: #0073ff;
+            color: var(--surface);
+            background-color: #f4f1de;
             border-right: 1px solid #ffffff;
         }
         .order-payment-method {
-            background-color: #6d00da68;
+            background-color: #e07b5f;
         }
     }
 }

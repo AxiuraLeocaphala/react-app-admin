@@ -1,11 +1,11 @@
 .order.assembly {
     .order-id {
-        background-color: rgb(0, 128, 81);
+        background-color: #6192A4;
     }
 
     table.active {
         .order-id {
-            background-color: rgb(81, 0, 128);
+            background-color: #9145d3;
         }
     }
 }
