@@ -1,12 +1,11 @@
 import { useEffect, useState, useRef, memo } from "react"
-import { webSocket } from "./../../request/wsAdminPanel";
 import { ScheduleRefreshTokens, CancelRefreshTokens } from "../../other/updateTokens";
 import OrderConfirm from '../orderConfir/orderConfirm';
 import OrderAssembly from "../orderAssembly/orderAssembly";
 import OrderADelivery from "../orderADelivery/orderADelivery";
 import { currentThem } from "../../other/them";
 import { UserAgent } from "../../other/userAgent";
-import QualifierError from "../../request/_qualifierError";
+import QualifierError from "./../../ws/_qualifierError";
 import CameraSVGBlack from "./../../other/picture/Camera-black.svg";
 import CameraSVGWhite from "./../../other/picture/Camera-white.svg";
 import PasswordSVGBlack from "./../../other/picture/Password-black.svg";
@@ -16,6 +15,7 @@ import { useVisibility} from "../orderADelivery/button/other/context";
 import "./style/selectWorkspace.css";
 import "./style/adminpanel.css";
 import "./style/commonOrder.css";
+import { useWebSocket } from "../../ws/wsContextAdminPanel";
 
 const AdminPanel = () => {
     const [view, setView] = useState("GeneralView");
@@ -27,12 +27,13 @@ const AdminPanel = () => {
     const [popupIsShow, setPopupIsShow] = useState(false);
     const colADeliveryRef = useRef(null);
     const { setComponentVisibility } = useVisibility();
-    const [errMsgShow, setErrMsgShow] = useState(false); // awaitingDelivery
-    const [errMsg, setErrMsg] = useState(null); // awaitingDelivery
+    const [errMsgShow, setErrMsgShow] = useState(false);
+    const [errMsg, setErrMsg] = useState(null);
     const orderListADelivedy = useRef(null);
     const MemorisedOrderConfirm = memo(OrderConfirm);
     const MemoriesOrderAssembly = memo(OrderAssembly);
-    const MemoriesOrderADelivery = memo(OrderADelivery); 
+    const MemoriesOrderADelivery = memo(OrderADelivery);
+    const webSocket = useWebSocket();
 
     useEffect(() => {
         document.documentElement.setAttribute("data-theme", currentThem());
@@ -45,130 +46,132 @@ const AdminPanel = () => {
             setPasswordSVG(PasswordSVGWhite);
         }
 
+        if (webSocket) {
+            webSocket.onmessage = e => {
+                const req = JSON.parse(e.data);
+                switch (req.contentType) {
+                    case "listOrders":
+                        setListOrders(req);
+                        break;
+                    case "newOrder":
+                        setListOrders(prevListOrders => {
+                            const updateConfirmation = [
+                                ...prevListOrders.oConfirmation,
+                                req.data.newOrder
+                            ]
+                            
+                            return{
+                                ...prevListOrders,
+                                oConfirmation: updateConfirmation
+                            }
+                        })
+                        break
+                    case "rejectAcceptOrder":
+                        if (req.data.action === "reject") {
+                            setListOrders(prevListOrders => {
+                                const updateConfirmation = prevListOrders.oConfirmation.filter(order => {
+                                    if (order["OrderId"] === req.data.orderId && order["UserId"] === req.data.userId) {
+                                        return false;
+                                    }
+                                    return true;
+                                })
+            
+                                return {
+                                    ...prevListOrders,
+                                    oConfirmation: updateConfirmation
+                                }
+                            })
+                        } else if (req.data.action === "accept") {
+                            setListOrders(prevListOrders => {
+                                const updateConfirmation = prevListOrders.oConfirmation.filter(order => {
+                                    if (order["OrderId"] === req.data.orderId && order["UserId"] === req.data.userId) {
+                                        return false;
+                                    }
+                                    return true;
+                                })
+            
+                                const updateAssembly = [
+                                    ...prevListOrders.oAssembly,
+                                    ...prevListOrders.oConfirmation.filter(order => 
+                                        order["OrderId"] === req.data.orderId && order["UserId"] === req.data.userId
+                                    ).map(order =>({
+                                        ...order,
+                                        Status: "assembly"
+                                    }))
+                                ]
+                            
+                                return {
+                                    ...prevListOrders,
+                                    oConfirmation: updateConfirmation,
+                                    oAssembly: updateAssembly
+                                };
+                            });
+                        };
+                        break;
+                    case "completedOrder":
+                        setListOrders(prevListOrders => {
+                            const updateAssembly = prevListOrders.oAssembly.filter(order => 
+                                !(order["OrderId"] === req.data.orderId && order["UserId"] === req.data.userId)
+                            );
+            
+                            const updateADelivery = [
+                                ...prevListOrders.ADelivery,
+                                ...prevListOrders.oAssembly.filter(order => 
+                                    order["OrderId"] === req.data.orderId && order["UserId"] === req.data.userId 
+                                ).map(order => ({
+                                    ...order,
+                                    Status: "Adelivery"
+                                }))
+                            ];
+                            
+                            return {
+                                ...prevListOrders,
+                                oAssembly: updateAssembly,
+                                ADelivery: updateADelivery
+                            };
+                        })
+                        break;
+                    case "checkCodeReceive":
+                        if (req.codeCorrect) {
+                            colADeliveryRef.current.style.overflow = "";
+                            setTimeout(() => {
+                                setPopupIsShow(false);
+                                const targetOrder = document.getElementById(req.orderId);
+                                orderListADelivedy.current.scrollTo({
+                                    top: targetOrder.offsetTop - 60,
+                                    behavior: 'smooth'
+                                })
+                                setComponentVisibility(req.orderId, true);
+                            }, 50)
+                        } else {
+                            setErrMsg(`${req.errorMessage}`);
+                            setErrMsgShow(true);
+                        }
+                        break;
+                    case "orderIssued":
+                        setListOrders(prevListOrders => {
+                            const updateADelivery = prevListOrders.ADelivery.filter(order => {
+                                if (order["OrderId"] === req.data.orderId && order["UserId"] === req.data.userId) {
+                                    return false;
+                                }
+                                return true;
+                            })
+            
+                            return {
+                                ...prevListOrders,
+                                ADelivery: updateADelivery
+                            }
+                        })
+                        break
+                }
+            }
+        }
+
         ScheduleRefreshTokens(timerRef)
         return () => {
             CancelRefreshTokens(timerRef);
         }
-    })
-
-    webSocket.onmessage = e => {
-        const req = JSON.parse(e.data);
-        switch (req.contentType) {
-            case "listOrders":
-                setListOrders(req);
-                break;
-            case "newOrder":
-                setListOrders(prevListOrders => {
-                    const updateConfirmation = [
-                        ...prevListOrders.oConfirmation,
-                        req.data.newOrder
-                    ]
-                    
-                    return{
-                        ...prevListOrders,
-                        oConfirmation: updateConfirmation
-                    }
-                })
-                break
-            case "rejectAcceptOrder":
-                if (req.data.action === "reject") {
-                    setListOrders(prevListOrders => {
-                        const updateConfirmation = prevListOrders.oConfirmation.filter(order => {
-                            if (order["OrderId"] === req.data.orderId && order["UserId"] === req.data.userId) {
-                                return false;
-                            }
-                            return true;
-                        })
-    
-                        return {
-                            ...prevListOrders,
-                            oConfirmation: updateConfirmation
-                        }
-                    })
-                } else if (req.data.action === "accept") {
-                    setListOrders(prevListOrders => {
-                        const updateConfirmation = prevListOrders.oConfirmation.filter(order => {
-                            if (order["OrderId"] === req.data.orderId && order["UserId"] === req.data.userId) {
-                                return false;
-                            }
-                            return true;
-                        })
-    
-                        const updateAssembly = [
-                            ...prevListOrders.oAssembly,
-                            ...prevListOrders.oConfirmation.filter(order => 
-                                order["OrderId"] === req.data.orderId && order["UserId"] === req.data.userId
-                            ).map(order =>({
-                                ...order,
-                                Status: "assembly"
-                            }))
-                        ]
-                    
-                        return {
-                            ...prevListOrders,
-                            oConfirmation: updateConfirmation,
-                            oAssembly: updateAssembly
-                        };
-                    });
-                };
-                break;
-            case "completedOrder":
-                setListOrders(prevListOrders => {
-                    const updateAssembly = prevListOrders.oAssembly.filter(order => 
-                        !(order["OrderId"] === req.data.orderId && order["UserId"] === req.data.userId)
-                    );
-    
-                    const updateADelivery = [
-                        ...prevListOrders.ADelivery,
-                        ...prevListOrders.oAssembly.filter(order => 
-                            order["OrderId"] === req.data.orderId && order["UserId"] === req.data.userId 
-                        ).map(order => ({
-                            ...order,
-                            Status: "Adelivery"
-                        }))
-                    ];
-                    
-                    return {
-                        ...prevListOrders,
-                        oAssembly: updateAssembly,
-                        ADelivery: updateADelivery
-                    };
-                })
-                break;
-            case "checkCodeReceive":
-                if (req.codeCorrect) {
-                    colADeliveryRef.current.style.overflow = "";
-                    setTimeout(() => {
-                        setPopupIsShow(false);
-                        const targetOrder = document.getElementById(req.orderId);
-                        orderListADelivedy.current.scrollTo({
-                            top: targetOrder.offsetTop - 60,
-                            behavior: 'smooth'
-                        })
-                        setComponentVisibility(req.orderId, true);
-                    }, 50)
-                } else {
-                    setErrMsg(`${req.errorMessage}`);
-                    setErrMsgShow(true);
-                }
-                break;
-            case "orderIssued":
-                setListOrders(prevListOrders => {
-                    const updateADelivery = prevListOrders.ADelivery.filter(order => {
-                        if (order["OrderId"] === req.data.orderId && order["UserId"] === req.data.userId) {
-                            return false;
-                        }
-                        return true;
-                    })
-    
-                    return {
-                        ...prevListOrders,
-                        ADelivery: updateADelivery
-                    }
-                })
-                break
-        }
-    }
+    }, [webSocket])
 
     const handleClickBtnSelect = (e) => {
         if (UserAgent.isMobile()) {

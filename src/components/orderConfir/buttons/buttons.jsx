@@ -1,8 +1,8 @@
-import { useState, useRef } from "react";
-import { webSocket } from "../../../request/wsAdminPanel"
+import { useRef } from "react";
+import { useWebSocket } from "../../../ws/wsContextAdminPanel";
 import "./buttons.css"
 
-function wsSend(order, action) {
+function wsSend(webSocket, order, action) {
     webSocket.send(
         JSON.stringify({
             contentType: "rejectAcceptOrder",
@@ -16,11 +16,12 @@ function wsSend(order, action) {
 const Buttons = ({ order }) => {
     const rejectBtnRef = useRef(null);
     const acceptBtnRef = useRef(null);
+    const webSocket = useWebSocket();
 
     const handleClickBtn = (e) => {
         if (e.target.className.includes("reject")) {
             if (rejectBtnRef.current.classList.value === "reject active") {
-                wsSend(order, "reject");
+                wsSend(webSocket, order, "reject");
             } else {
                 if (acceptBtnRef.current.classList.value === "accept active") {
                     acceptBtnRef.current.classList.remove("active");
@@ -32,7 +33,7 @@ const Buttons = ({ order }) => {
             }
         } else {
             if (acceptBtnRef.current.classList.value === "accept active") {
-                wsSend(order, "accept");
+                wsSend(webSocket, order, "accept");
             } else {
                 if (rejectBtnRef.current.classList.value === "reject active") {
                     rejectBtnRef.current.classList.remove("active");

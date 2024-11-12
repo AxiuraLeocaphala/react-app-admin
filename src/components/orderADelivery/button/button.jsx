@@ -1,9 +1,9 @@
 import { useRef } from "react";
-import { webSocket } from "../../../request/wsAdminPanel";
 import { useVisibility } from "./other/context";
+import { useWebSocket } from "../../../ws/wsContextAdminPanel";
 import "./button.css";
 
-function wsSend(order) {
+function wsSend(webSocket, order) {
     webSocket.send(JSON.stringify({
         "contentType": "orderIssued",
         "orderId": order["OrderId"],
@@ -14,12 +14,12 @@ function wsSend(order) {
 const Button = ({ order }) => {
     const { visibilityState } = useVisibility();
     const isVisible = visibilityState[order["OrderId"]] || false;
-    const btnRef = useRef(null); 
-    const { setComponentVisibility } = useVisibility();
+    const btnRef = useRef(null);
+    const webSocket = useWebSocket();
 
     const handleClickBtn = () => {
         if (btnRef.current.classList.value === "active") {
-            wsSend(order);
+            wsSend(webSocket, order);
         } else {
             const handleClickBody = () => {
                 if (btnRef.current.classList.value === "active") {

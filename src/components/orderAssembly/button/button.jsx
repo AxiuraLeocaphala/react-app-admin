@@ -1,8 +1,8 @@
 import { useRef } from "react";
-import { webSocket } from "../../../request/wsAdminPanel"
+import { useWebSocket } from "../../../ws/wsContextAdminPanel";
 import "./button.css"
 
-function wsSend(order) {
+function wsSend(webSocket, order) {
     webSocket.send(
         JSON.stringify({
             contentType: "completedOrder",
@@ -13,11 +13,12 @@ function wsSend(order) {
 }
 
 const Button = ({ order }) => {
-    const btnRef = useRef(null)
+    const btnRef = useRef(null);
+    const webSocket = useWebSocket();
 
     const handleClickBtn = () => {
         if (btnRef.current.classList.value === "active") {
-            wsSend(order);
+            wsSend(webSocket, order);
         } else {
             const handleClickBody = () => {
                 if (btnRef.current.classList.value === "active") {

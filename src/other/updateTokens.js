@@ -1,6 +1,6 @@
 import { getCookie, setCookie } from "./cookie";
 import axios from "axios"
-import QualifierErrors from "../request/_qualifierError";
+import QualifierErrors from "../ws/_qualifierError";
 
 export function ScheduleRefreshTokens(timerRef) {
     const accessToken = getCookie('accessToken');
@@ -10,13 +10,6 @@ export function ScheduleRefreshTokens(timerRef) {
     timerRef.current = setTimeout(() => {
         RefreshTokens(timerRef);
     }, timeout);
-}
-
-export function CancelRefreshTokens(timerRef) {
-    if (timerRef.current) {
-        clearTimeout(timerRef.current);
-        timerRef.current = null;
-    }
 }
 
 export async function RefreshTokens(timerRef) {
@@ -32,4 +25,11 @@ export async function RefreshTokens(timerRef) {
         ScheduleRefreshTokens(timerRef);
     })
     .catch(err => QualifierErrors(err));
+}
+
+export function CancelRefreshTokens(timerRef) {
+    if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+    }
 }

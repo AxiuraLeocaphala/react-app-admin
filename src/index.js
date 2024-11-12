@@ -2,16 +2,19 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider, redirect } from 'react-router-dom';
 import Authenticate from './components/authenticate/authenticate';
-import AdminPanel from './components/adminpanel/adminpanel';
 import ErrorElement from './components/ErrorElement/ErrorElement';
+import BaseStartupComponent from './components/BSC/baseStartupComponent';
 import { getCookie } from './other/cookie';
-import {VisibilityProvider} from "./components/orderADelivery/button/other/context"
+import { WebSocketProvider } from './ws/wsContextAdminPanel';
 import "./App.css";
 
 const router = createBrowserRouter([
 	{
 		path: '/authenticate',
-		element: <Authenticate/>,
+		element:
+			<WebSocketProvider url="ws://127.0.0.1:3003/auth/admin/authenticate">
+				<Authenticate/>
+			</WebSocketProvider>,
 		errorElement: <ErrorElement/>,
 		loader: async () => {
 			if (getCookie("accessToken") && getCookie("refreshToken")) {
@@ -23,13 +26,16 @@ const router = createBrowserRouter([
 	},
 	{
 		path: "/adminpanel",
-		element: <VisibilityProvider><AdminPanel/></VisibilityProvider>,
+		element: <BaseStartupComponent/>,
 		errorElement: <ErrorElement/>,
 		loader: async () => {
-			if (!getCookie('accessToken') && !getCookie('refreshToken')) {
+			const accessToken = getCookie('accessToken');
+			const refreshToken = getCookie('refreshToken');
+
+			if (!accessToken && !refreshToken) {
 				return redirect("/authenticate")
 			} else {
-				return null;
+				return {accessToken};
 			}
 		}
 	}

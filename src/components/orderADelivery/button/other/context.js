@@ -12,7 +12,7 @@ export const VisibilityProvider = ({ children }) => {
             ...prevState,
             [componentId]: isVisible
         }));
-    } ;
+    };
 
     return (
         <VisibilityContext.Provider value={{visibilityState, setComponentVisibility}}>

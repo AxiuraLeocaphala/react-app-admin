@@ -2,7 +2,7 @@ import Button from "./button/button";
 import { useVisibility } from "./button/other/context";
 import "./orderADelivery.css";
 
-const OrderADelivery = ({ order, isTarget }) => {
+const OrderADelivery = ({ order }) => {
     const {visibilityState} = useVisibility();
     const isVisible = visibilityState[order["OrderId"]] || false;
 

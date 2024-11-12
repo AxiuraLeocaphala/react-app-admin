@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState} from "react";
-import { webSocket } from "../../../request/wsAdminPanel";
+import { useWebSocket } from "../../../ws/wsContextAdminPanel";
 import "./popupCheckCodeReceive.css";
 
 const PopupCheckCodeReceive = ({ 
@@ -12,7 +12,8 @@ const PopupCheckCodeReceive = ({
     }) => {
     const overlayRef = useRef(null);
     const inputRef = useRef(null);
-    const [positionOverlay, setPositionOverlay] = useState(null)
+    const [positionOverlay, setPositionOverlay] = useState(null);
+    const webSocket = useWebSocket();
 
     useEffect(() => {
         setPositionOverlay(colADeliveryRef.current.scrollTop);
