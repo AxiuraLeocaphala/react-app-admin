@@ -19,8 +19,12 @@ const Authenticate = () => {
     const [passwordVisible, setPasswordVisible] = useState(false)
     const [showQR, setShowQR] = useState(true)
     const [QR, setQR] = useState("");
-    const inputRef = useRef(null);
-    const labelRef = useRef(null); 
+    const input1Ref = useRef(null);
+    const input2Ref = useRef(null);
+    const input3Ref = useRef(null);
+    const label1Ref = useRef(null);
+    const label2Ref = useRef(null);
+    const label3Ref = useRef(null);
     const btnRef = useRef(null);
     const navigate = useNavigate();
     const [bgPrimary, setBgPrimary] = useState(null);
@@ -50,11 +54,11 @@ const Authenticate = () => {
                     setShowQR(true);
                 } else if (data.contentType === "2FA"){
                     if (data.stat === false){
-                        inputRef.current.style.borderColor = `#ff595a`;
-                        labelRef.current.style.borderColor = `#ff595a`;
-                        inputRef.current.addEventListener('input', () => {
-                            inputRef.current.style.borderColor = `#ffffff`;
-                            labelRef.current.style.borderColor = `#ffffff`;
+                        input3Ref.current.style.borderColor = `#ff595a`;
+                        label3Ref.current.style.borderColor = `#ff595a`;
+                        input3Ref.current.addEventListener('input', () => {
+                            input3Ref.current.style.borderColor = `#ffffff`;
+                            label3Ref.current.style.borderColor = `#ffffff`;
                         })
                     } else if (data.stat === true) {
                         webSocket.send(JSON.stringify({"contentType": "close"}))
@@ -79,20 +83,20 @@ const Authenticate = () => {
         }
     }, [webSocket]);
 
-    const handleClickOnToggle = () => {
+    const handleClickOnToggle = (input) => {
         setPasswordVisible(!passwordVisible);
-        inputRef.current.type = inputRef.current.type === "password" ? ("text"):("password")
+        input.type = input.type === "password" ? ("text"):("password")
     }
 
-    const onFocusInput = () => {
-        labelRef.current.style.color = "white";
-        labelRef.current.style.top = `-${inputRef.current.getBoundingClientRect().height / 2}px`;
+    const onFocusInput = (label, input) => {
+        label.style.color = "white";
+        label.style.top = `-${input.getBoundingClientRect().height / 2}px`;
     }
 
-    const onBlurInput = () => {
-        if (inputRef.current.value === "") {
-            labelRef.current.style.color = "#9e9e9e";
-            labelRef.current.style.top = 0;
+    const onBlurInput = (label, input) => {
+        if (input.value === "") {
+            label.style.color = "#9e9e9e";
+            label.style.top = 0;
         }
     }
 
@@ -104,14 +108,19 @@ const Authenticate = () => {
         btnRef.current.style.backgroundColor = "#ffffff";
     }
 
-    const onClickBtn = () => {
-        webSocket.send(JSON.stringify({"contentType": "2FA", "code": inputRef.current.value}))
+    const onClickBtn = (contentType, ...args) => {
+        if (contentType === "2FA") {
+            webSocket.send(JSON.stringify({"contentType": contentType, "code": args[0]}));
+        } else if (contentType === "LP") {
+            webSocket.send(JSON.stringify({"contentType": contentType, "login": args[0], "password": args[1]}));
+        }
     }
 
     const handleClickOnSwitch = () => {
         if (showLogin) {
             webSocket.send(JSON.stringify({"contentType": "qr"}));
         } else {
+            // НЕ CLOSE 
             webSocket.send(JSON.stringify({"contentType": "close"}));
         }
         setShowLogin(prevState => !prevState);
@@ -121,8 +130,8 @@ const Authenticate = () => {
         if (showLogin) {
             return (
                 <div className="card">
-                    <div className="switch-wrapper"><img src={CameraSVG} className="switch to-qr" onClick={handleClickOnSwitch}/></div>
-                    <h4 className="h4-login">Вход по логину и паролю</h4>
+                    <img src={CameraSVG} className="switch to-qr" onClick={handleClickOnSwitch}/>
+                    <h4>Вход по логину и паролю</h4>
                     <div className="input-wrapper">
                         <div className="input-field">
                             <input 
@@ -130,13 +139,12 @@ const Authenticate = () => {
                                 autoComplete="off" 
                                 required 
                                 className="input-field-input"
-                                id="0"
-                                ref={inputRef} 
-                                onFocus={onFocusInput}
-                                onBlur={onBlurInput}
+                                ref={input1Ref}
+                                onFocus={() => onFocusInput(label1Ref.current, input1Ref.current)}
+                                onBlur={() => onBlurInput(label1Ref.current, input1Ref.current)}
                             />
                             <div className="input-field-border"></div>
-                            <label ref={labelRef}>
+                            <label ref={label1Ref}>
                                 <span className="i18n">
                                     Логин
                                 </span>
@@ -147,25 +155,24 @@ const Authenticate = () => {
                                 type="password" 
                                 autoComplete="off" 
                                 required 
-                                className="input-field-input" 
-                                id="1"
-                                ref={inputRef} 
-                                onFocus={onFocusInput}
-                                onBlur={onBlurInput}
+                                className="input-field-input"
+                                ref={input2Ref}
+                                onFocus={() => onFocusInput(label2Ref.current, input2Ref.current)}
+                                onBlur={() => onBlurInput(label2Ref.current, input2Ref.current)}
                             />
                             <div className="input-field-border"></div>
-                            <label ref={labelRef}>
+                            <label ref={label2Ref}>
                                 <span className="i18n">
                                     Пароль
                                 </span>
                             </label>
-                            <span className="toggle-visible" onClick={handleClickOnToggle}>
+                            <span className="toggle-visible" onClick={() => handleClickOnToggle(input2Ref.current)}>
                                 <span className="tgicon">
                                     <img src={passwordVisible ? (eye2):(eye1)} alt=""/>
                                 </span>
                             </span>
                         </div>
-                        <button className="btn" onClick={onClickBtn} onMouseOver={onOverBtn} onMouseOut={onOutBtn} ref={btnRef}>
+                        <button className="btn" onClick={() => onClickBtn("LP", input1Ref.current.value, input2Ref.current.value)} onMouseOver={onOverBtn} onMouseOut={onOutBtn} ref={btnRef}>
                             <span className="btn-text">Продолжить</span>
                         </button>
                     </div>
@@ -226,27 +233,26 @@ const Authenticate = () => {
                                 <div className="input-field">
                                     <input 
                                         type="password" 
-                                        autoComplete="off" 
+                                        autoComplete="off"
                                         required 
                                         className="input-field-input"
-                                        id="2"
-                                        ref={inputRef}
-                                        onFocus={onFocusInput}
-                                        onBlur={onBlurInput}
+                                        ref={input3Ref}
+                                        onFocus={() => onFocusInput(label3Ref.current, input3Ref.current)}
+                                        onBlur={() => onBlurInput(label3Ref.current, input3Ref.current)}
                                     />
                                     <div className="input-field-border"></div>
-                                    <label ref={labelRef}>
+                                    <label ref={label3Ref}>
                                         <span className="i18n">
                                             Пароль
                                         </span>
                                     </label>
-                                    <span className="toggle-visible" onClick={handleClickOnToggle}>
+                                    <span className="toggle-visible" onClick={() => handleClickOnToggle(input3Ref.current)}>
                                         <span className="tgicon">
                                             <img src={passwordVisible ? (eye2):(eye1)} alt=""/>
                                         </span>
                                     </span>
                                 </div>
-                                <button className="btn" onClick={onClickBtn} onMouseOver={onOverBtn} onMouseOut={onOutBtn} ref={btnRef}>
+                                <button className="btn" onClick={() => onClickBtn("2FA", input3Ref.current,)} onMouseOver={onOverBtn} onMouseOut={onOutBtn} ref={btnRef}>
                                     <span className="btn-text">Продолжить</span>
                                 </button>
                             </div>
