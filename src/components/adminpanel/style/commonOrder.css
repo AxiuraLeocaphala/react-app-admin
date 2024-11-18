@@ -2,7 +2,7 @@
     display: flex;
     flex-direction: column;
     gap: 1.3rem;
-    max-height: 100%;
+    max-height: 100vh;
     overflow-y: auto;
     scrollbar-gutter: stable;
     padding-right: 2px;
@@ -16,31 +16,31 @@
             overflow: hidden;
             border-spacing: 0;
             border-radius: 4px;
-            border: 1px solid #ffffff;
+            border: 1px solid var(--on-background);
             .order-id {
                 text-align: center;
             }
             .order-payment-method {
                 text-align: center;
-                border-left: 1px solid #ffffff;
+                border-left: 1px solid var(--on-background);
             }
             .product-quantity {
                 width: 10%;
                 text-align: center;
-                border-top: 1px solid #ffffff;
+                border-top: 1px solid var(--on-background);
             }
             .product-name {
                 text-align: left;
                 padding: 0 3px;
-                border-top: 1px solid #ffffff;
-                border-left: 1px solid #ffffff;
+                border-top: 1px solid var(--on-background);
+                border-left: 1px solid var(--on-background);
             }
             .product-price {
                 text-align: center;
-                border-top: 1px solid #ffffff;
+                border-top: 1px solid var(--on-background);
             }
             tr.row-product:nth-child(odd) {
-                background-color: rgb(34, 34, 34);
+                background-color: var(--background-secondary);
             }
         }
         .btn-space {

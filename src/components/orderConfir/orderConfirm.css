@@ -1,9 +1,8 @@
 .order.confirm {
     table {
         .order-id {
-            color: var(--surface);
+            color: var(--on-secondary);
             background-color: #f4f1de;
-            border-right: 1px solid #ffffff;
         }
         .order-payment-method {
             background-color: #e07b5f;

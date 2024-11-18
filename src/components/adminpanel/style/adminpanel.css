@@ -3,68 +3,70 @@
     align-items: flex-start;
     gap: 1rem;
     height: 100vh;
-    .column {
+    .column-wrapper {
         flex: 1;
         position: relative;
-        display: flex;
-        flex-direction: column;
-        gap: .2rem;
         max-width: 600px;
-        max-height: 100%;
         margin: 0 auto;
-        background-color: var(--surface);
-        box-shadow: 1px 1px 10px 1px var(--background-secondary);
-        padding: 6px 0 6px 6px;
-        border-radius: 14px;
-        .column-header {
-            position: sticky;
-            max-width: 592px;
-            height: 100%;
-            .header-top {
-                display: flex;
-                width: calc(100% - 6px);
-                justify-content: space-between;
-                padding: 0 15px;
-                border-radius: 10px 10px 0 0; 
-            }
-            .header-top.first {
-                color: var(--surface);
-                background-color: var(--primary-variant1);
-            }
-            .header-top.second {
-                color: var(--surface);
-                background-color: var(--primary-variant2);
-            }
-            .header-top.third {
-                color: #94a0da;
-                background-color: var(--primary-variant3);
-            }
-        }
-        .header-right {
-            position: fixed;
+        .column {
             display: flex;
-            justify-content: flex-end;
-            width: 40%;
-            height: 2.2rem;
-            transform: rotate(-90deg) scaleY(-1);
-            transform-origin: bottom right;
-            right: 2.2rem;
-            z-index: 2;
-            .wrapper-fringe {
-                width: 30%;
-                margin: 0 10px;
-                .fringe {
-                    width: 100%;
-                    height: 100%;
+            flex-direction: column;
+            gap: .2rem;
+            margin-top: 10px;
+            background-color: var(--surface);
+            box-shadow: 1px 1px 10px 1px var(--background-secondary);
+            padding: 6px 0 6px 6px;
+            border-radius: 14px;
+            .column-header {
+                position: sticky;
+                max-width: 592px;
+                height: 100%;
+                .header-top {
                     display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    border-radius: 0 0 10px 10px;
-                    background-color: var(--on-surface);
-                    img {
-                        width: auto;
-                        max-width: 100%;
+                    width: calc(100% - 6px);
+                    justify-content: space-between;
+                    padding: 0 15px;
+                    border-radius: 10px 10px 0 0; 
+                }
+                .header-top.first {
+                    color: var(--on-secondary);
+                    background-color: var(--primary-variant1);
+                }
+                .header-top.second {
+                    color: var(--surface);
+                    background-color: var(--primary-variant2);
+                }
+                .header-top.third {
+                    color: #94a0da;
+                    background-color: var(--primary-variant3);
+                }
+            }
+            .header-right {
+                position: fixed;
+                display: flex;
+                justify-content: flex-end;
+                width: 100%;
+                height: 2.2rem;
+                transform: rotate(-90deg) scaleY(-1);
+                transform-origin: bottom right;
+                right: 2.2rem;
+                z-index: 2;
+                .wrapper-fringe {
+                    width: 30%;
+                    margin: 0 10px;
+                    .fringe {
+                        width: 100%;
                         height: 100%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        border-radius: 0 0 10px 10px;
+                        background-color: var(--on-surface);
+                        img {
+                            width: auto;
+                            max-width: 100%;
+                            height: 100%;
+                        }
                     }
                 }
             }

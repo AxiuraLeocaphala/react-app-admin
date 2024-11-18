@@ -1,5 +1,6 @@
 .order.awaiting-delivery {
     .order-id {
+        color: #FFFFFF;
         background-color: #86112E;
     }
     .order-payment-method {

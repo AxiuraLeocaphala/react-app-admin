@@ -1,5 +1,6 @@
 .order.assembly {
     .order-id {
+        color: var(--on-surface);
         background-color: #6192A4;
     }
 

@@ -68,6 +68,26 @@ const Authenticate = () => {
                     } else {
                         setShowQR(false);
                     }
+                } else if (data.contentType === "LP") {
+                    if (data.stat === true) {
+                        webSocket.send(JSON.stringify({"contentType": "close"}))
+                        setCookie("accessToken", data.accessToken, {'max-age': 14400});
+                        setCookie("refreshToken", data.refreshToken, {'max-age': 14400});
+                        navigate('/adminpanel', {state: {accessToken: data.accessToken}});
+                    } else if (data.stat === false) {
+                        input1Ref.current.style.borderColor = `#ff595a`;
+                        label1Ref.current.style.borderColor = `#ff595a`;
+                        input1Ref.current.addEventListener('input', () => {
+                            input1Ref.current.style.borderColor = `#ffffff`;
+                            label1Ref.current.style.borderColor = `#ffffff`;
+                        })
+                        input2Ref.current.style.borderColor = `#ff595a`;
+                        label2Ref.current.style.borderColor = `#ff595a`;
+                        input2Ref.current.addEventListener('input', () => {
+                            input2Ref.current.style.borderColor = `#ffffff`;
+                            label2Ref.current.style.borderColor = `#ffffff`;
+                        })
+                    }
                 } else if (data.contentType === "error"){
                     setShowQR(true);
                     QualifierError(data.error);
@@ -135,7 +155,7 @@ const Authenticate = () => {
                     <div className="input-wrapper">
                         <div className="input-field">
                             <input 
-                                type="password" 
+                                type="text" 
                                 autoComplete="off" 
                                 required 
                                 className="input-field-input"

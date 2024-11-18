@@ -16,6 +16,7 @@ import "./style/selectWorkspace.css";
 import "./style/adminpanel.css";
 import "./style/commonOrder.css";
 import { useWebSocket } from "../../ws/wsContextAdminPanel";
+import MainHeader from "../mainHeader/mainHeader";
 
 const AdminPanel = () => {
     const [view, setView] = useState("GeneralView");
@@ -211,98 +212,107 @@ const AdminPanel = () => {
             return (
                 <div  className="main">
                     {["Confirm", "GeneralView"].includes(view) && (
-                        <div className="column">
-                            <div className="column-header">
-                                <div className="header-top first">
-                                    Ожидают принятия
-                                    <div className="order-counter">
-                                        {listOrders.oConfirmation.length}
+                        <div className="column-wrapper">
+                            {["Confirm"].includes(view) && (<MainHeader/>)}
+                            <div className="column">
+                                <div className="column-header">
+                                    <div className="header-top first">
+                                        Ожидают принятия
+                                        <div className="order-counter">
+                                            {listOrders.oConfirmation.length}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div className="order-list">
-                                {listOrders.oConfirmation.map((order) => {
-                                    return (
-                                        <MemorisedOrderConfirm
-                                            key={order["OrderId"]}
-                                            order={order}
-                                        />
-                                    )
-                                })}
+                                <div className="order-list">
+                                    {listOrders.oConfirmation.map((order) => {
+                                        return (
+                                            <MemorisedOrderConfirm
+                                                key={order["OrderId"]}
+                                                order={order}
+                                            />
+                                        )
+                                    })}
+                                </div>
                             </div>
                         </div>
                     )}
                     {["Assembly", "GeneralView"].includes(view) && (
-                        <div className="column" ref={columnAssemblyRef}>
-                            <div className="column-header">
-                                <div className="header-top second">
-                                    В сборке 
-                                    <div className="order-counter">
-                                        {listOrders.oAssembly.length}
+                        <div className="column-wrapper">
+                            <MainHeader/>
+                            <div className="column" ref={columnAssemblyRef}>
+                                <div className="column-header">
+                                    <div className="header-top second">
+                                        В сборке 
+                                        <div className="order-counter">
+                                            {listOrders.oAssembly.length}
+                                        </div>
                                     </div>
+                                </div> 
+                                <div className="order-list">
+                                    {listOrders.oAssembly.map((order) => {
+                                        return (
+                                            <MemoriesOrderAssembly
+                                                key={order["OrderId"]}
+                                                order={order}
+                                                columnRef={columnAssemblyRef}
+                                            />
+                                        )
+                                    })}
                                 </div>
-                            </div> 
-                            <div className="order-list">
-                                {listOrders.oAssembly.map((order) => {
-                                    return (
-                                        <MemoriesOrderAssembly
-                                            key={order["OrderId"]}
-                                            order={order}
-                                            columnRef={columnAssemblyRef}
-                                        />
-                                    )
-                                })}
                             </div>
                         </div>
                     )}
                     {["ADelivery", "GeneralView"].includes(view) && (
-                        <div className="column" ref={colADeliveryRef}>
-                            <div className="column-header">
-                                <div className="header-top third">
-                                    Ожидают выдачи 
-                                    <div className="order-counter">
-                                        {listOrders.ADelivery.length}
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="header-right">
-                                {UserAgent.isMobile() && (
-                                    <div className="wrapper-fringe">
-                                        <div className="slide left"></div>
-                                        <div className="slide-background"></div>
-                                        <div className="fringe" onClick={handleScanQr}>
-                                            <img src={CameraSVG} alt="" />
+                        <div className="column-wrapper">
+                            {["ADelivery"].includes(view) && (<MainHeader/>)}
+                            <div className="column" ref={colADeliveryRef}>
+                                <div className="column-header">
+                                    <div className="header-top third">
+                                        Ожидают выдачи 
+                                        <div className="order-counter">
+                                            {listOrders.ADelivery.length}
                                         </div>
-                                        <div className="slide right"></div>
-                                        <div className="slide-background"></div>
-                                    </div>
-                                )}
-                                <div className="wrapper-fringe">
-                                    <div className="fringe"onClick={handleInputPassword}>
-                                        <img src={PasswordSVG} alt="" />
                                     </div>
                                 </div>
+                                <div className="header-right">
+                                    {UserAgent.isMobile() && (
+                                        <div className="wrapper-fringe">
+                                            <div className="slide left"></div>
+                                            <div className="slide-background"></div>
+                                            <div className="fringe" onClick={handleScanQr}>
+                                                <img src={CameraSVG} alt="" />
+                                            </div>
+                                            <div className="slide right"></div>
+                                            <div className="slide-background"></div>
+                                        </div>
+                                    )}
+                                    <div className="wrapper-fringe">
+                                        <div className="fringe"onClick={handleInputPassword}>
+                                            <img src={PasswordSVG} alt="" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="order-list" ref={orderListADelivedy}>
+                                    {listOrders.ADelivery.map((order) => {
+                                        return (
+                                            <MemoriesOrderADelivery
+                                                key={order["OrderId"]}
+                                                order={order}
+                                            />
+                                        )
+                                    })}
+                                </div>
+                                {popupIsShow && (
+                                    <PopupCheckCodeReceive
+                                        setPopupIsShow={setPopupIsShow}
+                                        colADeliveryRef={colADeliveryRef}
+                                        setErrMsgShow={setErrMsgShow}
+                                        errMsgShow={errMsgShow}
+                                        setErrMsg={setErrMsg}
+                                        etErrMsg={errMsg}
+                                    />
+                                )}
                             </div>
-                            <div className="order-list" ref={orderListADelivedy}>
-                                {listOrders.ADelivery.map((order) => {
-                                    return (
-                                        <MemoriesOrderADelivery
-                                            key={order["OrderId"]}
-                                            order={order}
-                                        />
-                                    )
-                                })}
-                            </div>
-                            {popupIsShow && (
-                                <PopupCheckCodeReceive
-                                    setPopupIsShow={setPopupIsShow}
-                                    colADeliveryRef={colADeliveryRef}
-                                    setErrMsgShow={setErrMsgShow}
-                                    errMsgShow={errMsgShow}
-                                    setErrMsg={setErrMsg}
-                                    etErrMsg={errMsg}
-                                />
-                            )}
                         </div>
                     )}
                 </div>
