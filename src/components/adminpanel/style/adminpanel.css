@@ -51,6 +51,7 @@
                 transform-origin: bottom right;
                 right: 2.2rem;
                 z-index: 2;
+                cursor: pointer;
                 .wrapper-fringe {
                     width: 30%;
                     margin: 0 10px;

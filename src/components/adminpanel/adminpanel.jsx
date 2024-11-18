@@ -22,6 +22,7 @@ const AdminPanel = () => {
     const [view, setView] = useState("GeneralView");
     const timerRef = useRef(null);
     const [listOrders, setListOrders] = useState(null);
+    const [isCreationOrders, setCreationOrders] = useState(null)
     const columnAssemblyRef = useRef(null);
     const [CameraSVG, setCameraSVG] = useState(null);
     const [PasswordSVG, setPasswordSVG] = useState(null);
@@ -52,7 +53,8 @@ const AdminPanel = () => {
                 const req = JSON.parse(e.data);
                 switch (req.contentType) {
                     case "listOrders":
-                        setListOrders(req);
+                        setListOrders({oConfirmation: req.oConfirmation, oAssembly: req.oAssembly, ADelivery: req.ADelivery});
+                        setCreationOrders(req.stateCreatinonOrder);
                         break;
                     case "newOrder":
                         setListOrders(prevListOrders => {
@@ -163,7 +165,10 @@ const AdminPanel = () => {
                                 ADelivery: updateADelivery
                             }
                         })
-                        break
+                        break;
+                    case "changeStateCreationOrders":
+                        setCreationOrders(req.data.newStateCreationOrders);
+                        break;
                 }
             }
         }
@@ -213,7 +218,7 @@ const AdminPanel = () => {
                 <div  className="main">
                     {["Confirm", "GeneralView"].includes(view) && (
                         <div className="column-wrapper">
-                            {["Confirm"].includes(view) && (<MainHeader/>)}
+                            {["Confirm"].includes(view) && (<MainHeader stateCreationOrders={isCreationOrders}/>)}
                             <div className="column">
                                 <div className="column-header">
                                     <div className="header-top first">
@@ -223,13 +228,10 @@ const AdminPanel = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="order-list">
+                                <div className="order-list" style={view === "Confirm" ? {height: "calc(100vh - 86px)"}:{}}>
                                     {listOrders.oConfirmation.map((order) => {
                                         return (
-                                            <MemorisedOrderConfirm
-                                                key={order["OrderId"]}
-                                                order={order}
-                                            />
+                                            <MemorisedOrderConfirm key={order["OrderId"]} order={order}/>
                                         )
                                     })}
                                 </div>
@@ -238,7 +240,7 @@ const AdminPanel = () => {
                     )}
                     {["Assembly", "GeneralView"].includes(view) && (
                         <div className="column-wrapper">
-                            <MainHeader/>
+                            <MainHeader stateCreationOrders={isCreationOrders}/>
                             <div className="column" ref={columnAssemblyRef}>
                                 <div className="column-header">
                                     <div className="header-top second">
@@ -248,14 +250,10 @@ const AdminPanel = () => {
                                         </div>
                                     </div>
                                 </div> 
-                                <div className="order-list">
+                                <div className="order-list" style={{height: "calc(100vh - 86px)"}}>
                                     {listOrders.oAssembly.map((order) => {
                                         return (
-                                            <MemoriesOrderAssembly
-                                                key={order["OrderId"]}
-                                                order={order}
-                                                columnRef={columnAssemblyRef}
-                                            />
+                                            <MemoriesOrderAssembly key={order["OrderId"]} order={order} columnRef={columnAssemblyRef}/>
                                         )
                                     })}
                                 </div>
@@ -264,7 +262,7 @@ const AdminPanel = () => {
                     )}
                     {["ADelivery", "GeneralView"].includes(view) && (
                         <div className="column-wrapper">
-                            {["ADelivery"].includes(view) && (<MainHeader/>)}
+                            {["ADelivery"].includes(view) && (<MainHeader stateCreationOrders={isCreationOrders}/>)}
                             <div className="column" ref={colADeliveryRef}>
                                 <div className="column-header">
                                     <div className="header-top third">
@@ -292,13 +290,10 @@ const AdminPanel = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="order-list" ref={orderListADelivedy}>
+                                <div className="order-list" ref={orderListADelivedy} style={view === "Confirm" ? {height: "calc(100vh - 86px)"}:{}}>
                                     {listOrders.ADelivery.map((order) => {
                                         return (
-                                            <MemoriesOrderADelivery
-                                                key={order["OrderId"]}
-                                                order={order}
-                                            />
+                                            <MemoriesOrderADelivery key={order["OrderId"]} order={order}/>
                                         )
                                     })}
                                 </div>

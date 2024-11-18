@@ -16,6 +16,7 @@
         border-bottom-right-radius: 10px;
         z-index: 3;
         transition: .3s background-color linear, .3s color linear;
+        cursor: pointer;
     }
     .surface-main-header {
         position: absolute;
@@ -39,6 +40,7 @@
                 width: 10%;
                 height: 24px;
                 border-radius: 14px;
+                cursor: pointer;
                 .switch {
                     position: absolute;
                     top: 0;
@@ -71,13 +73,13 @@
                 width: 10%;
                 height: 24px;
                 border-radius: 14px;
+                cursor: pointer;
                 .switch {
                     position: absolute;
                     top: 0;
                     width: 22px;
                     height: 22px;
                     border-radius: 50%;
-                    border: 1px solid var(--background);
                     background-color: var(--on-surface);
                 }
             }
@@ -86,6 +88,7 @@
                 background-color: #26ff00;
                 .switch {
                     right: 0;
+                    border: 1px solid #26ff00;
                 }
             }
             .switch-wrapper.off {
@@ -93,6 +96,7 @@
                 background-color: #ff0000;
                 .switch {
                     left: 0;
+                    border: 1px solid #ff0000;
                 }
             }
         }
