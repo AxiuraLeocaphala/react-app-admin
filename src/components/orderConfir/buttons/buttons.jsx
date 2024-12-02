@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { useWebSocket } from "../../../ws/wsContextAdminPanel";
+import { useMainContext } from "../../../other/mainContext";
 import "./buttons.css"
 
 function wsSend(webSocket, order, action) {
@@ -16,7 +16,7 @@ function wsSend(webSocket, order, action) {
 const Buttons = ({ order }) => {
     const rejectBtnRef = useRef(null);
     const acceptBtnRef = useRef(null);
-    const webSocket = useWebSocket();
+    const { webSocket } = useMainContext();
 
     const handleClickBtn = (e) => {
         if (e.target.className.includes("reject")) {

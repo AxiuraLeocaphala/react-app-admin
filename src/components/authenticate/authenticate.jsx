@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import QualifierError from '../../ws/_qualifierError'
+import QualifierError from '../../other/_qualifierError'
 import { QRCode } from "react-qrcode-logo";
 import eye1 from './../../other/picture/eye1.svg';
 import eye2 from './../../other/picture/eye2.svg';
@@ -11,7 +11,7 @@ import "./authenticate.css";
 import { setCookie } from "../../other/cookie";
 import { useNavigate } from "react-router-dom";
 import { currentThem } from "../../other/them";
-import {useWebSocket} from "../../ws/wsContextAdminPanel"
+import { useMainContext } from "../../other/mainContext"; 
 
 const Authenticate = () => {
     const [showLogin, setShowLogin] = useState(true);
@@ -31,7 +31,7 @@ const Authenticate = () => {
     const [colPrimary, setColPrimary] = useState(null);
     const [CameraSVG, setCameraSVG] = useState(null);
     const [PasswordSVG, setPasswordSVG] = useState(null);
-    const webSocket = useWebSocket();
+    const { webSocket } = useMainContext();
 
     useEffect(() => {
         document.documentElement.setAttribute("data-theme", currentThem());
@@ -62,8 +62,8 @@ const Authenticate = () => {
                         })
                     } else if (data.stat === true) {
                         webSocket.send(JSON.stringify({"contentType": "close"}))
-                        setCookie("accessToken", data.accessToken, {'max-age': 14400});
-                        setCookie("refreshToken", data.refreshToken, {'max-age': 14400});
+                        setCookie("accessTokenAdmin", data.accessToken, {'max-age': 14400});
+                        setCookie("refreshTokenAdmin", data.refreshToken, {'max-age': 14400});
                         navigate('/adminpanel', {state: {accessToken: data.accessToken}});
                     } else {
                         setShowQR(false);
@@ -71,8 +71,8 @@ const Authenticate = () => {
                 } else if (data.contentType === "LP") {
                     if (data.stat === true) {
                         webSocket.send(JSON.stringify({"contentType": "close"}))
-                        setCookie("accessToken", data.accessToken, {'max-age': 14400});
-                        setCookie("refreshToken", data.refreshToken, {'max-age': 14400});
+                        setCookie("accessTokenAdmin", data.accessToken, {'max-age': 14400});
+                        setCookie("refreshTokenAdmin", data.refreshToken, {'max-age': 14400});
                         navigate('/adminpanel', {state: {accessToken: data.accessToken}});
                     } else if (data.stat === false) {
                         input1Ref.current.style.borderColor = `#ff595a`;
@@ -150,7 +150,7 @@ const Authenticate = () => {
         if (showLogin) {
             return (
                 <div className="card">
-                    <img src={CameraSVG} className="switch to-qr" onClick={handleClickOnSwitch}/>
+                    <img src={CameraSVG} className="switch to-qr" onClick={handleClickOnSwitch} alt=""/>
                     <h4>Вход по логину и паролю</h4>
                     <div className="input-wrapper">
                         <div className="input-field">
@@ -205,7 +205,9 @@ const Authenticate = () => {
                         <>
                             {QR && (
                                 <>
-                                    <div className="switch-wrapper"><img src={PasswordSVG} className="switch to-login" onClick={handleClickOnSwitch}/></div>
+                                    <div className="switch-wrapper">
+                                        <img src={PasswordSVG} className="switch to-login" onClick={handleClickOnSwitch} alt=""/>
+                                    </div>
                                     <div className="qr">
                                         <QRCode
                                             value={QR}

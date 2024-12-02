@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { useWebSocket } from "../../../ws/wsContextAdminPanel";
+import { useMainContext } from "../../../other/mainContext";
 import "./button.css"
 
 function wsSend(webSocket, order) {
@@ -14,7 +14,7 @@ function wsSend(webSocket, order) {
 
 const Button = ({ order }) => {
     const btnRef = useRef(null);
-    const webSocket = useWebSocket();
+    const { webSocket } = useMainContext();
 
     const handleClickBtn = () => {
         if (btnRef.current.classList.value === "active") {

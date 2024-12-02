@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState} from "react";
-import { useWebSocket } from "../../../ws/wsContextAdminPanel";
+import { useMainContext } from "../../../other/mainContext"
 import "./popupCheckCodeReceive.css";
 
 const PopupCheckCodeReceive = ({ 
@@ -13,7 +13,7 @@ const PopupCheckCodeReceive = ({
     const overlayRef = useRef(null);
     const inputRef = useRef(null);
     const [positionOverlay, setPositionOverlay] = useState(null);
-    const webSocket = useWebSocket();
+    const { webSocket } = useMainContext();
 
     useEffect(() => {
         setPositionOverlay(colADeliveryRef.current.scrollTop);
@@ -23,7 +23,7 @@ const PopupCheckCodeReceive = ({
             inputRef.current.focus()
             overlayRef.current.addEventListener('click', handleClickOverlay);
         }, 150);
-    })
+    }, [])
 
     const handleClickOverlay = (e) => {
         if (e.target.closest('.popupCheckCodeReceive') === null) {
@@ -32,6 +32,7 @@ const PopupCheckCodeReceive = ({
             setTimeout(() => {
                 setPopupIsShow(false);
             }, 50)
+            overlayRef.current.removeEventListener('click', handleClickOverlay);
         }
     };
 

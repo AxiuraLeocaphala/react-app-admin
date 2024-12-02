@@ -1,20 +1,29 @@
-import {useState, useRef } from 'react';
+import {useState, useRef, useEffect} from 'react';
 import "./mainHeader.css";
 import { currentThem } from '../../other/them';
 import { setCookie } from '../../other/cookie';
-import { useWebSocket } from '../../ws/wsContextAdminPanel';
-
-function wsSend(webSocket) {
-    webSocket.send(JSON.stringify({
-        "contentType": "changeStateCreationOrders",
-    }))
-}
+import { useMainContext } from '../../other/mainContext'
+import ArrowBlack from '../../other/picture/Arrow-black.svg';
+import ArrowWhite from '../../other/picture/Arrow-white.svg';
 
 const MainHeader = ({stateCreationOrders}) => {
     const [isExpanded, setExpanded] = useState(true);
     const mainHeader = useRef(null);
     const [isLightTheme, setLightTheme] = useState(currentThem() === "light" ? true:false);
-    const webSocket = useWebSocket(); 
+    const { webSocket, workers } = useMainContext();
+    const [arrow, setArrow] = useState();
+    const arrow0Ref = useRef();
+    const arrow1Ref = useRef();
+    const [isTurned0, setTurned0] = useState(false);
+    const [isTurned1, setTurned1] = useState(false);
+
+    useEffect(() => {
+        if (currentThem() === "dark") {
+            setArrow(ArrowBlack);
+        } else {
+            setArrow(ArrowWhite);
+        }
+    }, [])
     
     const handleClickMainHeader = () => {
         setExpanded(prevState => !prevState);
@@ -27,7 +36,27 @@ const MainHeader = ({stateCreationOrders}) => {
     }
 
     const handleClickSwitch2 = () => {
-        wsSend(webSocket);
+        webSocket.send(JSON.stringify({
+            "contentType": "changeStateCreationOrders",
+        }))
+    }
+
+    const handleClickArrow = (arrowRef) => {
+        if (arrowRef.current.id === '0') {
+            if (!isTurned0) {
+                webSocket.send(JSON.stringify({
+                    "contentType": "getWorkers"
+                }))
+            }
+            setTurned0(prevState => !prevState)
+        } else {
+            if (!isTurned1) {
+                webSocket.send(JSON.stringify({
+                    "contentType": "getPricelist"
+                }))
+            }
+            setTurned1(prevState => !prevState)
+        }
     }
 
     return (
@@ -38,15 +67,44 @@ const MainHeader = ({stateCreationOrders}) => {
             <div className={`surface-main-header ${isExpanded ? "expanded":""}`}>
                 {isExpanded && (
                     <>
-                        <div className="switch-theme">
+                        <div className="row switch-theme">
                             Светлая тема 
                             <div className={`switch-wrapper ${isLightTheme ? "on":"off"}`} onClick={handleClickSwitch1}>
                                 <div className='switch'></div>
                             </div>
                         </div>
-                        <div className="add-worker">Сотрудники</div>
-                        <div className="stop-list">Стоп-лист</div>
-                        <div className="switch-receive">
+                        <div className="row switch-workarea">
+                            Сменить рабочую зону
+                        </div>
+                        <div className="row workers">
+                            Сотрудники
+                            <div className={`arrow ${isTurned0 ? ("turned"):("")}`} id='0' onClick={() => handleClickArrow(arrow0Ref)} ref={arrow0Ref}>
+                                <img src={arrow} alt=''/>
+                            </div>
+                            {isTurned0 && (
+                                workers !== undefined && (
+                                    <div className="list-workers">
+                                        {workers.map(worker => {
+                                            return (
+                                                <>
+                                                    <div className="worker">
+                                                        <span>{worker["FirstName"]} {worker["SecondName"]}</span>
+                                                        <button>удалить</button>
+                                                    </div>
+                                                </>
+                                            )
+                                        })}
+                                    </div>
+                                )
+                            )}
+                        </div>
+                        <div className="row stop-list">
+                            Стоп-лист
+                            <div className={`arrow ${isTurned1 ? ("turned"):("")}`} id='1' onClick={() => handleClickArrow(arrow1Ref)} ref={arrow1Ref}>
+                                <img src={arrow} alt=''/>
+                            </div>
+                        </div>
+                        <div className="row switch-receive">
                             Создавание новых заказов
                             <div className={`switch-wrapper ${stateCreationOrders ? "on":"off"}`} onClick={handleClickSwitch2}>
                                 <div className='switch'></div>

@@ -5,19 +5,19 @@ import Authenticate from './components/authenticate/authenticate';
 import ErrorElement from './components/ErrorElement/ErrorElement';
 import BaseStartupComponent from './components/BSC/baseStartupComponent';
 import { getCookie } from './other/cookie';
-import { WebSocketProvider } from './ws/wsContextAdminPanel';
+import { MainProvider } from './other/mainContext';
 import "./App.css";
 
 const router = createBrowserRouter([
 	{
 		path: '/authenticate',
 		element:
-			<WebSocketProvider url="ws://127.0.0.1:3003/auth/admin/authenticate">
+			<MainProvider url="ws://127.0.0.1:3003/auth/admin/authenticate">
 				<Authenticate/>
-			</WebSocketProvider>,
+			</MainProvider>,
 		errorElement: <ErrorElement/>,
 		loader: async () => {
-			if (getCookie("accessToken") && getCookie("refreshToken")) {
+			if (getCookie("accessTokenAdmin") && getCookie("refreshTokenAdmin")) {
 				return redirect("/adminpanel")
 			} else {
 				return null;
@@ -29,13 +29,13 @@ const router = createBrowserRouter([
 		element: <BaseStartupComponent/>,
 		errorElement: <ErrorElement/>,
 		loader: async () => {
-			const accessToken = getCookie('accessToken');
-			const refreshToken = getCookie('refreshToken');
+			const accessTokenAdmin = getCookie('accessTokenAdmin');
+			const refreshTokenAdmin = getCookie('refreshTokenAdmin');
 
-			if (!accessToken && !refreshToken) {
+			if (!accessTokenAdmin && !refreshTokenAdmin) {
 				return redirect("/authenticate")
 			} else {
-				return {accessToken};
+				return {accessTokenAdmin};
 			}
 		}
 	}

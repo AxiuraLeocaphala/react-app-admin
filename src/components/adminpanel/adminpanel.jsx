@@ -5,17 +5,16 @@ import OrderAssembly from "../orderAssembly/orderAssembly";
 import OrderADelivery from "../orderADelivery/orderADelivery";
 import { currentThem } from "../../other/them";
 import { UserAgent } from "../../other/userAgent";
-import QualifierError from "./../../ws/_qualifierError";
+import QualifierError from "../../other/_qualifierError";
 import CameraSVGBlack from "./../../other/picture/Camera-black.svg";
 import CameraSVGWhite from "./../../other/picture/Camera-white.svg";
 import PasswordSVGBlack from "./../../other/picture/Password-black.svg";
 import PasswordSVGWhite from "./../../other/picture/Password-white.svg";
 import PopupCheckCodeReceive from "../popup/CheckCodeReceive/popupCheckCodeReceive";
-import { useVisibility} from "../orderADelivery/button/other/context";
 import "./style/selectWorkspace.css";
 import "./style/adminpanel.css";
 import "./style/commonOrder.css";
-import { useWebSocket } from "../../ws/wsContextAdminPanel";
+import { useMainContext } from "../../other/mainContext";
 import MainHeader from "../mainHeader/mainHeader";
 
 const AdminPanel = () => {
@@ -28,14 +27,13 @@ const AdminPanel = () => {
     const [PasswordSVG, setPasswordSVG] = useState(null);
     const [popupIsShow, setPopupIsShow] = useState(false);
     const colADeliveryRef = useRef(null);
-    const { setComponentVisibility } = useVisibility();
     const [errMsgShow, setErrMsgShow] = useState(false);
     const [errMsg, setErrMsg] = useState(null);
     const orderListADelivedy = useRef(null);
     const MemorisedOrderConfirm = memo(OrderConfirm);
     const MemoriesOrderAssembly = memo(OrderAssembly);
     const MemoriesOrderADelivery = memo(OrderADelivery);
-    const webSocket = useWebSocket();
+    const { webSocket, setComponentVisibility, setArrayWorkers } = useMainContext();
 
     useEffect(() => {
         document.documentElement.setAttribute("data-theme", currentThem());
@@ -60,8 +58,20 @@ const AdminPanel = () => {
                         setListOrders(prevListOrders => {
                             const updateConfirmation = [
                                 ...prevListOrders.oConfirmation,
-                                req.data.newOrder
+                                req.data
                             ]
+                            
+                            return{
+                                ...prevListOrders,
+                                oConfirmation: updateConfirmation
+                            }
+                        })
+                        break
+                    case "removeNewOrder":
+                        setListOrders(prevListOrders => {
+                            const updateConfirmation = prevListOrders.filter(order => (
+                                order['OrderId'] !== req.data.OrderId && order['UserId'] !== req.data.UserId
+                            ))
                             
                             return{
                                 ...prevListOrders,
@@ -168,6 +178,12 @@ const AdminPanel = () => {
                         break;
                     case "changeStateCreationOrders":
                         setCreationOrders(req.data.newStateCreationOrders);
+                        break;
+                    case "getWorkers":
+                        setArrayWorkers(req.admins);
+                        break;
+                    case "getProcelist":
+                        console.log(req)
                         break;
                 }
             }

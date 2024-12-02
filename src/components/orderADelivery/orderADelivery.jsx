@@ -1,9 +1,9 @@
 import Button from "./button/button";
-import { useVisibility } from "./button/other/context";
+import { useMainContext } from "../../other/mainContext";
 import "./orderADelivery.css";
 
 const OrderADelivery = ({ order }) => {
-    const {visibilityState} = useVisibility();
+    const {visibilityState} = useMainContext();
     const isVisible = visibilityState[order["OrderId"]] || false;
 
     const countTotalPrice = () => {
