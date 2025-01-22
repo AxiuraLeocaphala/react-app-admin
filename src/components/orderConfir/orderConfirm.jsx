@@ -1,7 +1,7 @@
 import Buttons from "./buttons/buttons"
 import "./orderConfirm.css";
 
-const OrderConfirm = ({ order }) => {
+const OrderConfirm = ({ order }) => {    
     return (
         <div className="order confirm">
             <table>

@@ -6,7 +6,7 @@
 	opacity: 1;
 	background-color: rgba(0, 0, 0, 0.3);
 	-webkit-backdrop-filter: saturate(180%) blur(10px);
-	backdrop-filter: saturate(180%) blur(2px);
+	backdrop-filter: saturate(180%) blur(10px);
 	transition: all 50ms linear;
 	.popupCheckCodeReceive {
         position: absolute;

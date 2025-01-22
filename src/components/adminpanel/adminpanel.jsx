@@ -3,8 +3,8 @@ import { ScheduleRefreshTokens, CancelRefreshTokens } from "../../other/updateTo
 import OrderConfirm from '../orderConfir/orderConfirm';
 import OrderAssembly from "../orderAssembly/orderAssembly";
 import OrderADelivery from "../orderADelivery/orderADelivery";
-import { currentThem } from "../../other/them";
-import { UserAgent } from "../../other/userAgent";
+import { currentTheme } from "../../other/them";
+import { User } from "../../other/user";
 import QualifierError from "../../other/_qualifierError";
 import CameraSVGBlack from "./../../other/picture/Camera-black.svg";
 import CameraSVGWhite from "./../../other/picture/Camera-white.svg";
@@ -33,12 +33,18 @@ const AdminPanel = () => {
     const MemorisedOrderConfirm = memo(OrderConfirm);
     const MemoriesOrderAssembly = memo(OrderAssembly);
     const MemoriesOrderADelivery = memo(OrderADelivery);
-    const { webSocket, setComponentVisibility, setArrayWorkers } = useMainContext();
-
+    const { 
+        webSocket, 
+        setComponentVisibility,
+        setArrayWorkers, 
+        addNewWorker,
+        setLoginPassword
+    } = useMainContext();
+    
     useEffect(() => {
-        document.documentElement.setAttribute("data-theme", currentThem());
+        document.documentElement.setAttribute("data-theme", currentTheme());
 
-        if (currentThem() === "dark") {
+        if (currentTheme() === "dark") {
             setCameraSVG(CameraSVGBlack);
             setPasswordSVG(PasswordSVGBlack);
         } else {
@@ -73,7 +79,7 @@ const AdminPanel = () => {
                                 order['OrderId'] !== req.data.OrderId && order['UserId'] !== req.data.UserId
                             ))
                             
-                            return{
+                            return {
                                 ...prevListOrders,
                                 oConfirmation: updateConfirmation
                             }
@@ -182,8 +188,24 @@ const AdminPanel = () => {
                     case "getWorkers":
                         setArrayWorkers(req.admins);
                         break;
+                    case "addWorker":
+                        addNewWorker(req.newWorker);
+                        setLoginPassword(req.login, req.password)
+                        break;
+                    case "removeWorker":
+                        setArrayWorkers(prevArrayWorkers => {
+                            const updateArrayWorkers = prevArrayWorkers.filter(worker => (
+                                worker["Worker_Id"] !== req.id
+                            ))
+                            
+                            return updateArrayWorkers
+                        })
+                        break
                     case "getProcelist":
                         console.log(req)
+                        break;
+                    default:
+                        console.log("unknow contentType");
                         break;
                 }
             }
@@ -196,7 +218,7 @@ const AdminPanel = () => {
     }, [webSocket])
 
     const handleClickBtnSelect = (e) => {
-        if (UserAgent.isMobile()) {
+        if (User.isMobile()) {
             if (e.target.className === "GeneralView") {
                 QualifierError("It is not possible to open the general view on the phone");
             } else {
@@ -289,7 +311,7 @@ const AdminPanel = () => {
                                     </div>
                                 </div>
                                 <div className="header-right">
-                                    {UserAgent.isMobile() && (
+                                    {User.isMobile() && (
                                         <div className="wrapper-fringe">
                                             <div className="slide left"></div>
                                             <div className="slide-background"></div>

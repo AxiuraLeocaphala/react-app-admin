@@ -10,7 +10,7 @@ import PasswordSVGWhite from "./../../other/picture/Password-white.svg";
 import "./authenticate.css";
 import { setCookie } from "../../other/cookie";
 import { useNavigate } from "react-router-dom";
-import { currentThem } from "../../other/them";
+import { currentTheme } from "../../other/them";
 import { useMainContext } from "../../other/mainContext"; 
 
 const Authenticate = () => {
@@ -34,11 +34,11 @@ const Authenticate = () => {
     const { webSocket } = useMainContext();
 
     useEffect(() => {
-        document.documentElement.setAttribute("data-theme", currentThem());
+        document.documentElement.setAttribute("data-theme", currentTheme());
         const root = document.documentElement;
         setBgPrimary(getComputedStyle(root).getPropertyValue('--background'));
         setColPrimary(getComputedStyle(root).getPropertyValue('--on-surface'));
-        if (currentThem() === "dark") {
+        if (currentTheme() === "dark") {
             setCameraSVG(CameraSVGWhite);
             setPasswordSVG(PasswordSVGWhite);
         } else {
@@ -274,7 +274,7 @@ const Authenticate = () => {
                                         </span>
                                     </span>
                                 </div>
-                                <button className="btn" onClick={() => onClickBtn("2FA", input3Ref.current,)} onMouseOver={onOverBtn} onMouseOut={onOutBtn} ref={btnRef}>
+                                <button className="btn" onClick={() => onClickBtn("2FA", input3Ref.current.value,)} onMouseOver={onOverBtn} onMouseOut={onOutBtn} ref={btnRef}>
                                     <span className="btn-text">Продолжить</span>
                                 </button>
                             </div>

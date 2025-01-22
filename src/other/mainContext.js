@@ -7,6 +7,9 @@ export const useMainContext = () => useContext(MainContext);
 export const MainProvider = ({ children, url }) => {
     const [webSocket, setWebSocket] = useState(null);
     const [visibilityState, setVisibilityState] = useState({});
+    const [login, setLogin] = useState();
+    const [password, setPassword] = useState();
+    const [isLoadingNewWorker, setIsLoadingNewWorker] = useState();
     // eslint-disable-next-line
     const [workers, setWorkers] = useState([]);
     
@@ -30,13 +33,37 @@ export const MainProvider = ({ children, url }) => {
         setWorkers(arrayWorkers);
     }
 
+    const addNewWorker = (newWorker) => {
+        setWorkers(prevState => {
+            return [
+                ...prevState,
+                newWorker
+            ]
+        })
+    }
+
+    const setLoginPassword = (loginNewWorker, passwordNewWorker) => {
+        setTimeout(() => {
+            setIsLoadingNewWorker(false);
+        }, 3000)
+        setLogin(loginNewWorker);
+        setPassword(passwordNewWorker);
+    }
+
     return (
         <MainContext.Provider value={
             {
                 webSocket, 
                 visibilityState,
                 setComponentVisibility,
-                setArrayWorkers
+                workers,
+                setArrayWorkers,
+                addNewWorker,
+                setLoginPassword,
+                login,
+                password,
+                setIsLoadingNewWorker,
+                isLoadingNewWorker
             }
         }>
             {children}

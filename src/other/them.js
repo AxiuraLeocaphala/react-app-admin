@@ -1,6 +1,6 @@
 import { getCookie, setCookie } from "./cookie";
 
-export function currentThem() {
+export function currentTheme() {
     if(getCookie("them") === "light") {
         return "light";
     } else {

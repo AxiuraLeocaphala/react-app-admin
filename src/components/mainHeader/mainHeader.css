@@ -32,59 +32,8 @@
         z-index: 2;
         transition: .1s width linear,  .1s height linear;
         .row {
+            margin: 5px;
             height:30px;
-        }
-        .row.switch-theme {
-            display: flex;
-            justify-content: space-between;
-            .switch-wrapper {
-                border: 1px solid var(--background);
-                position: relative;
-                width: 10%;
-                height: 24px;
-                border-radius: 14px;
-                cursor: pointer;
-                .switch {
-                    position: absolute;
-                    top: 0;
-                    width: 22px;
-                    height: 22px;
-                    border-radius: 50%;
-                    background-color: var(--on-surface);
-                }
-            }
-            .switch-wrapper.on {
-                background-color: #fffb00;
-                .switch {
-                    border: 1px solid #fffb00;
-                    right: 0;
-                }
-            }
-            .switch-wrapper.off {
-                background-color: var(--background-secondary);
-                .switch {
-                    border: 1px solid var(--background);
-                    left: 0;
-                }
-            }
-        }
-        .row.workers {
-            display: flex;
-            justify-content: space-between;
-            .list-workers {
-                .worker{
-                    display: flex;
-                    justify-content: space-between;
-                }
-            }
-            .list-workers-loader {
-                height: 10px;
-                border: 1px solid var(--on-background);
-            }
-        }
-        .row.stop-list {
-            display: flex;
-            justify-content: space-between;
         }
         .arrow {
             transform: rotate(90deg);
@@ -96,41 +45,6 @@
         }
         .arrow.turned {
             transform: rotate(270deg);
-        }
-        .row.switch-receive {
-            display: flex;
-            justify-content: space-between;
-            .switch-wrapper {
-                position: relative;
-                width: 10%;
-                height: 24px;
-                border-radius: 14px;
-                cursor: pointer;
-                .switch {
-                    position: absolute;
-                    top: 0;
-                    width: 22px;
-                    height: 22px;
-                    border-radius: 50%;
-                    background-color: var(--on-surface);
-                }
-            }
-            .switch-wrapper.on {
-                border: 1px solid #26ff00;
-                background-color: #26ff00;
-                .switch {
-                    right: 0;
-                    border: 1px solid #26ff00;
-                }
-            }
-            .switch-wrapper.off {
-                border: 1px solid #ff0000;
-                background-color: #ff0000;
-                .switch {
-                    left: 0;
-                    border: 1px solid #ff0000;
-                }
-            }
         }
     }
     .main-header.expanded {
