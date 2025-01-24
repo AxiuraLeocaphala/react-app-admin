@@ -9,7 +9,7 @@ export const MainProvider = ({ children, url }) => {
     const [visibilityState, setVisibilityState] = useState({});
     const [login, setLogin] = useState();
     const [password, setPassword] = useState();
-    const [isLoadingNewWorker, setIsLoadingNewWorker] = useState();
+    const [isLoadingNewWorker, setIsLoadingNewChangeWorker] = useState();
     // eslint-disable-next-line
     const [workers, setWorkers] = useState([]);
     
@@ -44,10 +44,16 @@ export const MainProvider = ({ children, url }) => {
 
     const setLoginPassword = (loginNewWorker, passwordNewWorker) => {
         setTimeout(() => {
-            setIsLoadingNewWorker(false);
+            setIsLoadingNewChangeWorker(false);
         }, 3000)
         setLogin(loginNewWorker);
         setPassword(passwordNewWorker);
+    }
+
+    const setChangeWorker = () => {
+        setTimeout(() => {
+            setIsLoadingNewChangeWorker(false);
+        }, 3000)
     }
 
     return (
@@ -62,8 +68,9 @@ export const MainProvider = ({ children, url }) => {
                 setLoginPassword,
                 login,
                 password,
-                setIsLoadingNewWorker,
-                isLoadingNewWorker
+                setIsLoadingNewChangeWorker,
+                isLoadingNewWorker,
+                setChangeWorker
             }
         }>
             {children}

@@ -4,15 +4,19 @@ import SwitchWorkArea from "./childRows/switchWorkArea/switchWorkArea";
 import Workers from "./childRows/workers/workers";
 import StopList from "./childRows/stopList/stopList";
 import SwitchReceive from "./childRows/switchReceive/switchReceive";
-import FormAddWorker from "./AddWorker/formAddWorker";
+import FormAddChangeWorker from "./AddChangeWorker/formAddChangeWorker";
 import "./mainHeader.css";
 
 const MainHeader = ({stateCreationOrders}) => {
     const [isExpanded, setExpanded] = useState(true);
-    const [showFormAddWorker, setShowAddWorker] = useState(false);
+    const [showFormAddChangeWorker, setShowAddChangeWorker] = useState(false);
+    const [workerInfo, setWorkerInfo] = useState();
 
-    const visibleFormAddWorker = () => {
-        setShowAddWorker(prevState => !prevState)
+    const visibleFormAddChangeWorker = (workerInfo) => {
+        setShowAddChangeWorker(prevState => !prevState);
+        if (workerInfo) {
+            setWorkerInfo(workerInfo);
+        }
     }
 
     return (
@@ -23,10 +27,12 @@ const MainHeader = ({stateCreationOrders}) => {
             <div className={`surface-main-header ${isExpanded ? "expanded":""}`}>
                 {isExpanded && (
                     <>
-                        {showFormAddWorker && (<FormAddWorker visibleFormAddWorker={visibleFormAddWorker}/>)}
+                        {showFormAddChangeWorker && (
+                            <FormAddChangeWorker visibleFormAddChangeWorker={visibleFormAddChangeWorker} workerInfo={workerInfo}/>
+                        )}
                         <SwitchTheme/>
                         <SwitchWorkArea/>
-                        <Workers visibleFormAddWorker={visibleFormAddWorker}/>
+                        <Workers visibleFormAddChangeWorker={visibleFormAddChangeWorker}/>
                         <StopList/>
                         <SwitchReceive stateCreationOrders={stateCreationOrders}/>
                     </>

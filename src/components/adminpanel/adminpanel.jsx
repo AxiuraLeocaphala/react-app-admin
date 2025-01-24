@@ -192,6 +192,10 @@ const AdminPanel = () => {
                         addNewWorker(req.newWorker);
                         setLoginPassword(req.login, req.password)
                         break;
+
+                    case "changeWorker":
+                        
+                        break;
                     case "removeWorker":
                         setArrayWorkers(prevArrayWorkers => {
                             const updateArrayWorkers = prevArrayWorkers.filter(worker => (
