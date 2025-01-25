@@ -28,7 +28,7 @@ const MainHeader = ({stateCreationOrders}) => {
                 {isExpanded && (
                     <>
                         {showFormAddChangeWorker && (
-                            <FormAddChangeWorker visibleFormAddChangeWorker={visibleFormAddChangeWorker} workerInfo={workerInfo}/>
+                            <FormAddChangeWorker visibleFormAddChangeWorker={visibleFormAddChangeWorker} workerInfo={workerInfo} setWorkerInfo={setWorkerInfo}/>
                         )}
                         <SwitchTheme/>
                         <SwitchWorkArea/>

@@ -30,9 +30,10 @@ const Workers = ({ visibleFormAddChangeWorker }) => {
         }))
     }
 
-    const handleClickChangeWorker = (role, firstName, secondName, phoneNumber) => {
+    const handleClickChangeWorker = (workerId, role, firstName, secondName, phoneNumber) => {
         visibleFormAddChangeWorker(
             {
+                "workerId": workerId,
                 "role": role, 
                 "firstName": firstName, 
                 "secondName": secondName, 
@@ -72,6 +73,7 @@ const Workers = ({ visibleFormAddChangeWorker }) => {
                                     <button 
                                         className='btn-change-worker' 
                                         onClick={()=> handleClickChangeWorker(
+                                            worker["Worker_Id"],
                                             worker["Role"],
                                             worker["FirstName"],
                                             worker["SecondName"],

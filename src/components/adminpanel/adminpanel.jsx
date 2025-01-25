@@ -38,7 +38,8 @@ const AdminPanel = () => {
         setComponentVisibility,
         setArrayWorkers, 
         addNewWorker,
-        setLoginPassword
+        setLoginPassword,
+        setStateLoading
     } = useMainContext();
     
     useEffect(() => {
@@ -192,9 +193,16 @@ const AdminPanel = () => {
                         addNewWorker(req.newWorker);
                         setLoginPassword(req.login, req.password)
                         break;
-
                     case "changeWorker":
-                        
+                        setArrayWorkers(prevArrayWorkers => {
+                            const updateArrayWorkers = prevArrayWorkers.map(worker => {
+                                if (worker["Worker_Id"] === req.updateWorker.Worker_Id) return req.updateWorker
+                                return worker
+                            })
+
+                            return updateArrayWorkers
+                        })
+                        setStateLoading()
                         break;
                     case "removeWorker":
                         setArrayWorkers(prevArrayWorkers => {

@@ -43,17 +43,15 @@ export const MainProvider = ({ children, url }) => {
     }
 
     const setLoginPassword = (loginNewWorker, passwordNewWorker) => {
-        setTimeout(() => {
-            setIsLoadingNewChangeWorker(false);
-        }, 3000)
+        setStateLoading()
         setLogin(loginNewWorker);
         setPassword(passwordNewWorker);
     }
 
-    const setChangeWorker = () => {
+    const setStateLoading = () => {
         setTimeout(() => {
             setIsLoadingNewChangeWorker(false);
-        }, 3000)
+        }, 1000)
     }
 
     return (
@@ -70,7 +68,7 @@ export const MainProvider = ({ children, url }) => {
                 password,
                 setIsLoadingNewChangeWorker,
                 isLoadingNewWorker,
-                setChangeWorker
+                setStateLoading
             }
         }>
             {children}

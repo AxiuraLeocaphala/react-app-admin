@@ -5,22 +5,23 @@ import BlackCross from "../../../other/picture/Cross-black.svg";
 import WhiteCross from "../../../other/picture/Cross-white.svg";
 import "./formAddChangeWorker.css";
 
-const FormAddChangeWorker = ({ visibleFormAddChangeWorker, workerInfo }) => {
+const FormAddChangeWorker = ({ visibleFormAddChangeWorker, workerInfo, setWorkerInfo }) => {
     const arrow = currentTheme() === "black" ? (WhiteCross):(BlackCross);
-    const { webSocket, isLoadingNewWorker, setIsLoadingNewWorker, login, password } = useMainContext();
+    const { webSocket, isLoadingNewWorker, setIsLoadingNewChangeWorker, login, password } = useMainContext();
     const [isShowForm, setIsShowForm] = useState(true);
     const formWrapperRef = useRef();
     const [height, setHeight] = useState("auto");
-    const [isChange, setIsChange] = useState(false);
-    const [firstName, setFirstName] = useState(workerInfo["firstName"]); 
-    const [secondName, setSecondName] = useState(workerInfo["secondName"]); 
-    const [phoneNumber, setPhoneNumber] = useState(workerInfo["phoneNumber"]);
-    const [isChangedInfo, setIsChangeInfo] = useState(false)
+    const [isChange, setIsChange] = useState(workerInfo);
+    const [firstName, setFirstName] = useState(workerInfo ? (workerInfo["firstName"]):("")); 
+    const [secondName, setSecondName] = useState(workerInfo ? (workerInfo["secondName"]):("")); 
+    const [phoneNumber, setPhoneNumber] = useState(workerInfo ? (workerInfo["phoneNumber"]):(""));
+    const [role, setRole] = useState(workerInfo && workerInfo["role"]);
+    const [isChangedInfo, setIsChangeInfo] = useState(false);
     const [isShowWarning, setIsShowWarning] = useState(false);
 
     const addChangeWorker = (e) => {
         e.preventDefault();
-        setIsLoadingNewWorker(true);
+        setIsLoadingNewChangeWorker(true);
         setHeight(`${formWrapperRef.current.getBoundingClientRect().height}px`);
         if (!isChange) {
             webSocket.send(JSON.stringify({
@@ -31,14 +32,14 @@ const FormAddChangeWorker = ({ visibleFormAddChangeWorker, workerInfo }) => {
                 phoneNumber: e.target.elements["phoneNumber"].value
             }));
         } else {
-            if (isChangedInfo || workerInfo["role"]) {
+            if (isChangedInfo || role) {
                 webSocket.send(JSON.stringify({
                     contentType: "changeWorker",
-                    workerId: workerInfo["Worker_Id"],
+                    workerId: workerInfo["workerId"],
                     oldInfo: {
                         firstName: firstName,
                         secondName: secondName,
-                        role: workerInfo["role"],
+                        role: role,
                         phoneNumber: phoneNumber
                     },
                     newInfo: {
@@ -73,7 +74,10 @@ const FormAddChangeWorker = ({ visibleFormAddChangeWorker, workerInfo }) => {
 
     return (
         <div className="add-worker-wrapper"  ref={formWrapperRef} style={{height: height + "px"}}>
-            <div className="cross" onClick={() => visibleFormAddChangeWorker(null)}>
+            <div className="cross" onClick={() => {
+                setWorkerInfo(null);
+                visibleFormAddChangeWorker(null);
+            }}>
                 <img src={arrow} alt="" />
             </div>
             <h4>{isChange ? ("Изменить информацию"):("Новый сотрудник")}</h4>
@@ -92,7 +96,7 @@ const FormAddChangeWorker = ({ visibleFormAddChangeWorker, workerInfo }) => {
                                     pattern="[А-Яа-яЁё]+" 
                                     maxLength={15} 
                                     onBlur={handleBlur}
-                                    value={isChange ? (firstName):("")}
+                                    value={firstName}
                                     onChange={(e) => {
                                         setIsChangeInfo(true);
                                         setFirstName(e.target.value);
@@ -107,10 +111,10 @@ const FormAddChangeWorker = ({ visibleFormAddChangeWorker, workerInfo }) => {
                                     pattern="[А-Яа-яЁё]+" 
                                     maxLength={15} 
                                     onBlur={handleBlur}
-                                    value={isChange ? (workerInfo["secondName"]):("")}
-                                    onChange={(e)=>{
+                                    value={secondName}
+                                    onChange={(e) => {
                                         setIsChangeInfo(true);
-                                        setSecondName(e.target.value)
+                                        setSecondName(e.target.value);
                                     }}
                                 />
                             </div>
@@ -123,9 +127,10 @@ const FormAddChangeWorker = ({ visibleFormAddChangeWorker, workerInfo }) => {
                                         onChange={() => {
                                             setIsChangeInfo(true);
                                         }}
+                                        defaultValue={role}
                                     >
-                                        <option value="worker" selected={workerInfo["role"] === "worker"}>Работник</option>
-                                        <option value="admin" selected={workerInfo["role"] === "admin"}>Админ</option>
+                                        <option value="worker">Работник</option>
+                                        <option value="admin">Админ</option>
                                     </select>
                                     <div className="description">
                                         * «Работник» может принимать\отклонять заказы,
@@ -147,7 +152,7 @@ const FormAddChangeWorker = ({ visibleFormAddChangeWorker, workerInfo }) => {
                                         pattern="[8]{1}[0-9]{10}" 
                                         minLength="11" 
                                         maxLength="12"
-                                        value={isChange ? (workerInfo["phoneNumber"]):("")}
+                                        value={phoneNumber}
                                         onBlur={handleBlur}
                                         onChange={(e) => {
                                             setIsChangeInfo(true);
@@ -165,35 +170,50 @@ const FormAddChangeWorker = ({ visibleFormAddChangeWorker, workerInfo }) => {
                     <button>{isChange ? ("Изменить"):("Добавить")}</button>
                 </form>
             ):(
-                <div className="login-password-block">
-                    <div className={isLoadingNewWorker ? ("login loading"):("login loaded")}>
-                        <span>Логин:  </span> 
-                        {isLoadingNewWorker ? (
-                            <span className="spoiler-container">
-                                <span className="shine"></span>
-                                <span className="spoiler">***************</span>
-                            </span>
-                        ):(
-                            login
-                        )}
-                    </div>
-                    <div className={isLoadingNewWorker ? ("login password"):("login password")}>
-                        <span>Пароль:  </span> 
-                        {isLoadingNewWorker ? (
-                            <span className="spoiler-container">
-                                <span className="shine"></span>
-                                <span className="spoiler">***************</span>
-                            </span>
-                        ):(
-                            password
-                        )}
-                    </div>
-                    <div className="description">
-                        * Полученный логин и пароль теперь может использоваться 
-                        сотрудником для получения доступа к системе. Если при 
-                        добавлении был указан его номер телефона - он может 
-                        воспользователься qr-кодом для авторизации 
-                    </div>
+                <div className="response-block">
+                    {!isChange ? (
+                        <>
+                            <div className="login">
+                                <span>Логин:  </span> 
+                                {isLoadingNewWorker ? (
+                                    <span className="spoiler-container">
+                                        <span className="shine"></span>
+                                        <span className="spoiler">***************</span>
+                                    </span>
+                                ):(
+                                    login
+                                )}
+                            </div>
+                            <div className="password">
+                                <span>Пароль:  </span> 
+                                {isLoadingNewWorker ? (
+                                    <span className="spoiler-container">
+                                        <span className="shine"></span>
+                                        <span className="spoiler">***************</span>
+                                    </span>
+                                ):(
+                                    password
+                                )}
+                            </div>
+                            <div className="description">
+                                * Полученный логин и пароль теперь может использоваться 
+                                сотрудником для получения доступа к системе. Если при 
+                                регистрации был указан его номер телефона - он может 
+                                воспользователься qr-кодом для авторизации 
+                            </div>
+                        </>
+                    ):(
+                        <div className="response">
+                            {isLoadingNewWorker ? (
+                                <span className="spoiler-container">
+                                    <span className="shine"></span>
+                                    <span className="spoiler">*****************</span>
+                                </span>
+                            ):(
+                                <span className="response-msg">Изменения внесены</span>
+                            )}
+                        </div>
+                    )}
                 </div>
             )}
         </div>

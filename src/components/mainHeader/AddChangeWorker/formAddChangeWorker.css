@@ -90,9 +90,11 @@
             padding: 0;
         }
     }
-    .login-password-block {
+    .response-block {
         position: absolute;
-        .login, .password {
+        width: calc(100% - 20px);
+        height: calc(100% - 80px);
+        .login, .password, .response {
             margin: 20px 0;
             font-size: 2rem;
             font-weight: 400;
@@ -115,6 +117,22 @@
                     color: var(--background-secondary);
                     background-color: var(--background-secondary);
                 }
+            }
+        }
+        .response {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            transform: translate(-50%, calc(-50% - 50px));
+            .spoiler-container {
+                position: absolute;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+            .response-msg {
+                display: block;
+                text-align: center;
             }
         }
         .description {
