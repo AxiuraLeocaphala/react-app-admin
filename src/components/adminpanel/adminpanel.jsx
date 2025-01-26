@@ -18,7 +18,6 @@ import { useMainContext } from "../../other/mainContext";
 import MainHeader from "../mainHeader/mainHeader";
 
 const AdminPanel = () => {
-    const [view, setView] = useState("GeneralView");
     const timerRef = useRef(null);
     const [listOrders, setListOrders] = useState(null);
     const [isCreationOrders, setCreationOrders] = useState(null)
@@ -39,7 +38,10 @@ const AdminPanel = () => {
         setArrayWorkers, 
         addNewWorker,
         setLoginPassword,
-        setStateLoading
+        setStateLoading,
+        SetView,
+        view,
+        SetPriceList
     } = useMainContext();
     
     useEffect(() => {
@@ -213,8 +215,8 @@ const AdminPanel = () => {
                             return updateArrayWorkers
                         })
                         break
-                    case "getProcelist":
-                        console.log(req)
+                    case "getPriceList":
+                        SetPriceList(req.priceList)
                         break;
                     default:
                         console.log("unknow contentType");
@@ -229,15 +231,15 @@ const AdminPanel = () => {
         }
     }, [webSocket])
 
-    const handleClickBtnSelect = (e) => {
+    const handleClickBtnSelect = (view) => {
         if (User.isMobile()) {
-            if (e.target.className === "GeneralView") {
+            if (view === "GeneralView") {
                 QualifierError("It is not possible to open the general view on the phone");
             } else {
-                setView(e.target.className);
+                SetView(view);
             }
         } else {
-            setView(e.target.className);
+            SetView(view);
         }
     }
 
@@ -255,10 +257,10 @@ const AdminPanel = () => {
             <div className="select-workspace">
                 <h4>выберите рабочую зону</h4>
                 <div className="btn-space">
-                    <button className="Confirm" onClick={handleClickBtnSelect}>принятие заказов</button>
-                    <button className="Assembly"  onClick={handleClickBtnSelect}>сборка заказов</button>
-                    <button className="ADelivery"  onClick={handleClickBtnSelect}>выдача заказов</button>
-                    <button className="GeneralView"  onClick={handleClickBtnSelect}>общий вид</button>
+                    <button onClick={() => handleClickBtnSelect("Confirm")}>принятие заказов</button>
+                    <button onClick={() => handleClickBtnSelect("Assembly")}>сборка заказов</button>
+                    <button onClick={() => handleClickBtnSelect("ADelivery")}>выдача заказов</button>
+                    <button onClick={() => handleClickBtnSelect("GeneralView")}>общий вид</button>
                 </div>
             </div>
         )

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import SwitchTheme from "./childRows/switchTheme/switchTheme";
-import SwitchWorkArea from "./childRows/switchWorkArea/switchWorkArea";
+import SwitchWorkarea from "./childRows/switchWorkArea/switchWorkarea";
 import Workers from "./childRows/workers/workers";
 import StopList from "./childRows/stopList/stopList";
 import SwitchReceive from "./childRows/switchReceive/switchReceive";
@@ -30,11 +30,11 @@ const MainHeader = ({stateCreationOrders}) => {
                         {showFormAddChangeWorker && (
                             <FormAddChangeWorker visibleFormAddChangeWorker={visibleFormAddChangeWorker} workerInfo={workerInfo} setWorkerInfo={setWorkerInfo}/>
                         )}
-                        <SwitchTheme/>
-                        <SwitchWorkArea/>
-                        <Workers visibleFormAddChangeWorker={visibleFormAddChangeWorker}/>
                         <StopList/>
+                        <Workers visibleFormAddChangeWorker={visibleFormAddChangeWorker}/>
                         <SwitchReceive stateCreationOrders={stateCreationOrders}/>
+                        <SwitchTheme/>
+                        <SwitchWorkarea/>
                     </>
                 )}
             </div>

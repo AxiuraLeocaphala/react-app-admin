@@ -27,6 +27,12 @@
 	--on-background-dark: #FFFFFF;
 	--on-surface-dark: #FFFFFF;
 	--on-error-dark: #000000;
+
+	/* phone */
+	--width-surface-header-phone: 100%;
+
+	/* pc */
+	--width-surface-header-pc: 640px;
 }
 
 [data-theme='light'] {
@@ -57,6 +63,14 @@
 	--on-background: var(--on-background-dark);
 	--on-surface: var(--on-surface-dark);
 	--on-error: var(--on-error-dark);
+}
+
+[user-agent="phone"] {
+	--width-surface-header: var(--width-surface-header-phone)
+}
+
+[user-agent="pc"] {
+	--width-surface-header: var(--width-surface-header-pc)
 }
 
 body {

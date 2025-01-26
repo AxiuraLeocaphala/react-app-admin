@@ -1,11 +1,16 @@
-const SwitchWorkArea = () => {
-    // Сменить тему
+import { useMainContext } from "../../../../other/mainContext";
+import "./switchWorkarea.css";
+
+const SwitchWorkarea = () => {
+    const { SetView } = useMainContext();
 
     return (
         <div className="row switch-workarea">
-            Сменить рабочую зону
+            <button className="btn-switch-workarea" onClick={() => SetView(null)}>
+                Сменить рабочую зону
+            </button>
         </div>
     )
 }
 
-export default SwitchWorkArea;
+export default SwitchWorkarea;

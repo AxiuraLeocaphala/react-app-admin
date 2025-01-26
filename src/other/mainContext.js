@@ -10,6 +10,8 @@ export const MainProvider = ({ children, url }) => {
     const [login, setLogin] = useState();
     const [password, setPassword] = useState();
     const [isLoadingNewWorker, setIsLoadingNewChangeWorker] = useState();
+    const [view, setView] = useState("Assembly");
+    const [priceList, setPriceList] = useState();
     // eslint-disable-next-line
     const [workers, setWorkers] = useState([]);
     
@@ -54,6 +56,15 @@ export const MainProvider = ({ children, url }) => {
         }, 1000)
     }
 
+    const SetView = (view) => {
+        setView(view)
+    }
+
+    const SetPriceList = (priceList) => {
+        priceList.sort();
+        setPriceList(priceList);
+    }
+
     return (
         <MainContext.Provider value={
             {
@@ -68,7 +79,11 @@ export const MainProvider = ({ children, url }) => {
                 password,
                 setIsLoadingNewChangeWorker,
                 isLoadingNewWorker,
-                setStateLoading
+                setStateLoading,
+                SetView,
+                view,
+                SetPriceList,
+                priceList,
             }
         }>
             {children}
