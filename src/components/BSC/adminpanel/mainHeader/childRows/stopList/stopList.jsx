@@ -7,9 +7,10 @@ import Product from "./product/product";
 import "./stopList.css";
 
 const StopList = () => {
-    const [isTurned, setTurned] = useState(false);
-    const arrow = CurrentTheme() === "dark" ? (ArrowBlack):(ArrowWhite);
     const { webSocket, priceList } = useMainContext();
+    const [isTurned, setTurned] = useState(false);
+    const [listChanged, setListChanged] = useState([]);
+    const arrow = CurrentTheme() === "dark" ? (ArrowBlack):(ArrowWhite);
 
     const handleClickArrow = () => {
         if (!isTurned) {
@@ -18,6 +19,15 @@ const StopList = () => {
             }))
         }
         setTurned(prevState => !prevState)
+    }
+
+    const handleCickBtn = () => {
+        if (listChanged.length > 0) {
+            webSocket.send (JSON.stringify({
+                "contentType": "updatePriceList",
+                "update": listChanged
+            }))
+        }
     }
 
     return (
@@ -30,7 +40,7 @@ const StopList = () => {
             </div>
             {isTurned && priceList && (
                 <div className="priceList-container">
-                    <button className="btn-save">Сохранить</button>
+                    <button className="btn-save" onClick={handleCickBtn}>Сохранить</button>
                     <div className="description">
                         * Если поднять флаг в столбце «Стоп», то соответствующее 
                         ему блюдо окажется в стол-листе — заказать его будет невозможно 
@@ -45,7 +55,7 @@ const StopList = () => {
                     </div>
                     <div className="priceList">
                         {priceList.map((product, id) => {
-                            return <Product key={id} product={product}/>
+                            return <Product key={id} product={product} setListChanged={setListChanged}/>
                         })}
                     </div>
                 </div>
