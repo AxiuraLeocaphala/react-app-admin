@@ -5,7 +5,7 @@ import Authenticate from './components/authenticate/authenticate';
 import ErrorElement from './components/ErrorElement/ErrorElement';
 import BaseStartupComponent from './components/BSC/baseStartupComponent';
 import { getCookie } from './other/cookie';
-import { MainProvider } from './other/mainContext';
+import { MainProvider } from './components/context/mainContext';
 import "./App.css";
 
 const router = createBrowserRouter([

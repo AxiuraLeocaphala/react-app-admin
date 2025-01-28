@@ -12,28 +12,6 @@
         top: 10px;
         right: 10px;
     }
-    .switch.to-login {
-        width: 2.5rem;
-    }
-    .switch.to-qr {
-        width: 2rem;
-    }
-    .qr {
-        margin: 2rem auto 0;
-    }
-    h4 {
-        font-size: 2rem;
-        font-weight: 500;
-        text-align: center;
-        margin: 30px auto 20px;
-    }
-    .description {
-        max-width: 480px;
-        margin: 1rem auto 2rem;
-        li {
-            margin-top: 1rem;
-        }
-    }
     .input-wrapper {
         display: grid;
         gap: 1.5rem;
@@ -46,7 +24,7 @@
             position: relative;
             display: flex;
             align-items: center;
-
+    
             .input-field-input {
                 border-radius: 10px;
                 background-color: #212121;
@@ -67,6 +45,9 @@
             .input-field-input:focus {
                 transition: 0 border;
                 border: 2px solid #ffffff;
+            }
+            .input-field-input.unvalid {
+                border-color: #ff595a;;
             }
             .input-field-border {
                 position: absolute;

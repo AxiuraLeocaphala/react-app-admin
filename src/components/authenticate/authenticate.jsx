@@ -1,72 +1,45 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
+import LP from "./LP/loginPassword";
+import QR from "./QR/qrCode";
+import { useMainContext } from "./../context/mainContext";
+import { CurrentTheme } from "./../../other/theme"; 
+import { setCookie } from "../../other/cookie";
 import QualifierError from '../../other/_qualifierError'
-import { QRCode } from "react-qrcode-logo";
 import eye1 from './../../other/picture/eye1.svg';
 import eye2 from './../../other/picture/eye2.svg';
-import CameraSVGBlack from "./../../other/picture/Camera-black.svg";
-import CameraSVGWhite from "./../../other/picture/Camera-white.svg";
-import PasswordSVGBlack from "./../../other/picture/Password-black.svg";
-import PasswordSVGWhite from "./../../other/picture/Password-white.svg";
 import "./authenticate.css";
-import { setCookie } from "../../other/cookie";
-import { useNavigate } from "react-router-dom";
-import { currentTheme } from "../../other/them";
-import { useMainContext } from "../../other/mainContext"; 
 
 const Authenticate = () => {
-    const [showLogin, setShowLogin] = useState(true);
-    const [wsOpen, setWsOpen] = useState(false)
-    const [passwordVisible, setPasswordVisible] = useState(false)
-    const [showQR, setShowQR] = useState(true)
-    const [QR, setQR] = useState("");
-    const input1Ref = useRef(null);
-    const input2Ref = useRef(null);
-    const input3Ref = useRef(null);
-    const label1Ref = useRef(null);
-    const label2Ref = useRef(null);
-    const label3Ref = useRef(null);
-    const btnRef = useRef(null);
-    const navigate = useNavigate();
-    const [bgPrimary, setBgPrimary] = useState(null);
-    const [colPrimary, setColPrimary] = useState(null);
-    const [CameraSVG, setCameraSVG] = useState(null);
-    const [PasswordSVG, setPasswordSVG] = useState(null);
     const { webSocket } = useMainContext();
+    const [isOpenWS, setIsOpenWS] = useState(false);
+    const [isShowLogin, setIsShowLogin] = useState(true);
+    const [isShowQR, setIsShowQR] = useState(true)
+    const [isVisiblePassword, setIsVisiblePassword] = useState(false)
+    const [qrToken, setQRToken] = useState();
+    const [isUnvalidInput, setIsUnvalidInput] = useState(false);
+    const navigate = useNavigate();
+
+    document.documentElement.setAttribute("data-theme", CurrentTheme());
 
     useEffect(() => {
-        document.documentElement.setAttribute("data-theme", currentTheme());
-        const root = document.documentElement;
-        setBgPrimary(getComputedStyle(root).getPropertyValue('--background'));
-        setColPrimary(getComputedStyle(root).getPropertyValue('--on-surface'));
-        if (currentTheme() === "dark") {
-            setCameraSVG(CameraSVGWhite);
-            setPasswordSVG(PasswordSVGWhite);
-        } else {
-            setCameraSVG(CameraSVGBlack);
-            setPasswordSVG(PasswordSVGBlack);
-        }
-
         if (webSocket) {
             webSocket.onmessage = e => {
                 const data = JSON.parse(e.data)
                 if (data.contentType === "link"){
-                    setQR(data.link);
-                    setShowQR(true);
+                    setQRToken(data.link);
+                    setIsShowQR(true);
                 } else if (data.contentType === "2FA"){
                     if (data.stat === false){
-                        input3Ref.current.style.borderColor = `#ff595a`;
-                        label3Ref.current.style.borderColor = `#ff595a`;
-                        input3Ref.current.addEventListener('input', () => {
-                            input3Ref.current.style.borderColor = `#ffffff`;
-                            label3Ref.current.style.borderColor = `#ffffff`;
-                        })
+                        setIsUnvalidInput(true)
                     } else if (data.stat === true) {
                         webSocket.send(JSON.stringify({"contentType": "close"}))
                         setCookie("accessTokenAdmin", data.accessToken, {'max-age': 14400});
                         setCookie("refreshTokenAdmin", data.refreshToken, {'max-age': 14400});
                         navigate('/adminpanel', {state: {accessToken: data.accessToken}});
                     } else {
-                        setShowQR(false);
+                        setIsShowQR(false);
                     }
                 } else if (data.contentType === "LP") {
                     if (data.stat === true) {
@@ -75,212 +48,85 @@ const Authenticate = () => {
                         setCookie("refreshTokenAdmin", data.refreshToken, {'max-age': 14400});
                         navigate('/adminpanel', {state: {accessToken: data.accessToken}});
                     } else if (data.stat === false) {
-                        input1Ref.current.style.borderColor = `#ff595a`;
-                        label1Ref.current.style.borderColor = `#ff595a`;
-                        input1Ref.current.addEventListener('input', () => {
-                            input1Ref.current.style.borderColor = `#ffffff`;
-                            label1Ref.current.style.borderColor = `#ffffff`;
-                        })
-                        input2Ref.current.style.borderColor = `#ff595a`;
-                        label2Ref.current.style.borderColor = `#ff595a`;
-                        input2Ref.current.addEventListener('input', () => {
-                            input2Ref.current.style.borderColor = `#ffffff`;
-                            label2Ref.current.style.borderColor = `#ffffff`;
-                        })
+                        setIsUnvalidInput(true)
                     }
                 } else if (data.contentType === "error"){
-                    setShowQR(true);
+                    setIsShowQR(true);
                     QualifierError(data.error);
                 }
             }
         
             webSocket.onopen = e => {
-                if (!showLogin) {
+                if (!isShowLogin) {
                     webSocket.send(JSON.stringify({"contentType": "qr"}));
                 }
-                setWsOpen(true);
+                setIsOpenWS(true);
             }
         }
     }, [webSocket]);
 
     const handleClickOnToggle = (input) => {
-        setPasswordVisible(!passwordVisible);
+        setIsVisiblePassword(prevState => !prevState);
         input.type = input.type === "password" ? ("text"):("password")
     }
 
+    const handleClickOnSwitch = () => {
+        if (isShowLogin) {
+            webSocket.send(JSON.stringify({"contentType": "qr"}));
+        } else {
+            // НЕ CLOSE 
+            webSocket.send(JSON.stringify({"contentType": "close"}));
+        }
+        setIsShowLogin(prevState => !prevState);
+    }
+    
     const onFocusInput = (label, input) => {
+        input.removeAttribute('readonly')
         label.style.color = "white";
         label.style.top = `-${input.getBoundingClientRect().height / 2}px`;
     }
 
     const onBlurInput = (label, input) => {
+        input.setAttribute('readonly', '')
         if (input.value === "") {
             label.style.color = "#9e9e9e";
             label.style.top = 0;
         }
     }
 
-    const onOverBtn = () => {
-        btnRef.current.style.backgroundColor = "#dad9d9";
-    }
-
-    const onOutBtn = () => {
-        btnRef.current.style.backgroundColor = "#ffffff";
-    }
-
-    const onClickBtn = (contentType, ...args) => {
-        if (contentType === "2FA") {
-            webSocket.send(JSON.stringify({"contentType": contentType, "code": args[0]}));
-        } else if (contentType === "LP") {
-            webSocket.send(JSON.stringify({"contentType": contentType, "login": args[0], "password": args[1]}));
-        }
-    }
-
-    const handleClickOnSwitch = () => {
-        if (showLogin) {
-            webSocket.send(JSON.stringify({"contentType": "qr"}));
-        } else {
-            // НЕ CLOSE 
-            webSocket.send(JSON.stringify({"contentType": "close"}));
-        }
-        setShowLogin(prevState => !prevState);
-    }
-
-    if (wsOpen) {
-        if (showLogin) {
+    if (isOpenWS) {
+        if (isShowLogin) {
             return (
-                <div className="card">
-                    <img src={CameraSVG} className="switch to-qr" onClick={handleClickOnSwitch} alt=""/>
-                    <h4>Вход по логину и паролю</h4>
-                    <div className="input-wrapper">
-                        <div className="input-field">
-                            <input 
-                                type="text" 
-                                autoComplete="off" 
-                                required 
-                                className="input-field-input"
-                                ref={input1Ref}
-                                onFocus={() => onFocusInput(label1Ref.current, input1Ref.current)}
-                                onBlur={() => onBlurInput(label1Ref.current, input1Ref.current)}
-                            />
-                            <div className="input-field-border"></div>
-                            <label ref={label1Ref}>
-                                <span className="i18n">
-                                    Логин
-                                </span>
-                            </label>
-                        </div>
-                        <div className="input-field">
-                            <input 
-                                type="password" 
-                                autoComplete="off" 
-                                required 
-                                className="input-field-input"
-                                ref={input2Ref}
-                                onFocus={() => onFocusInput(label2Ref.current, input2Ref.current)}
-                                onBlur={() => onBlurInput(label2Ref.current, input2Ref.current)}
-                            />
-                            <div className="input-field-border"></div>
-                            <label ref={label2Ref}>
-                                <span className="i18n">
-                                    Пароль
-                                </span>
-                            </label>
-                            <span className="toggle-visible" onClick={() => handleClickOnToggle(input2Ref.current)}>
-                                <span className="tgicon">
-                                    <img src={passwordVisible ? (eye2):(eye1)} alt=""/>
-                                </span>
-                            </span>
-                        </div>
-                        <button className="btn" onClick={() => onClickBtn("LP", input1Ref.current.value, input2Ref.current.value)} onMouseOver={onOverBtn} onMouseOut={onOutBtn} ref={btnRef}>
-                            <span className="btn-text">Продолжить</span>
-                        </button>
-                    </div>
-                </div>
-            )
+               <LP 
+                    handleClickOnSwitch={handleClickOnSwitch} 
+                    handleClickOnToggle={handleClickOnToggle} 
+                    webSocket={webSocket} 
+                    isVisiblePassword={isVisiblePassword}
+                    eye1={eye1}
+                    eye2={eye2}
+                    setIsUnvalidInput={setIsUnvalidInput}
+                    isUnvalidInput={isUnvalidInput}
+                    onFocusInput={onFocusInput}
+                    onBlurInput={onBlurInput}
+                /> 
+            ) 
+            
         } else {
             return (
-                <div className="card">
-                    {showQR ? (
-                        <>
-                            {QR && (
-                                <>
-                                    <div className="switch-wrapper">
-                                        <img src={PasswordSVG} className="switch to-login" onClick={handleClickOnSwitch} alt=""/>
-                                    </div>
-                                    <div className="qr">
-                                        <QRCode
-                                            value={QR}
-                                            size={200}
-                                            eyeRadius={[
-                                                {
-                                                    outer: [10, 10, 10, 10],
-                                                    inner: [3, 3, 3, 3]
-                                                },
-                                                {
-                                                    outer: [10, 10, 10, 10],
-                                                    inner: [3, 3, 3, 3]
-                                                },
-                                                {
-                                                    outer: [10, 10, 10, 10],
-                                                    inner: [3, 3, 3, 3]
-                                                }
-                                            ]}
-                                            
-                                            fgColor={colPrimary}
-                                            bgColor={bgPrimary}
-                                            qrStyle="dots"
-                                        />
-                                    </div>
-                                    <h4 className="h4-qr">Вход по QR-коду</h4>
-                                    <ol className="description">
-                                        <li>Откройте телеграм с телефона.</li>
-                                        <li>
-                                            <span>
-                                                Откройте <b>Настройки</b> {'>'} <b>Устройства</b> {'>'} <b>Подключить устройство</b>.
-                                            </span>
-                                        </li>
-                                        <li>Для подтверждения направьте камеру телефона на этот экран.</li>
-                                    </ol>
-                                </>
-                            )}
-                        </>
-                    ) : (
-                        <>
-                            <h4>Введите ваш пароль</h4>
-                            <div className="description">
-                                Ваш аккаунт защищен дополнительным паролем
-                            </div>
-                            <div className="input-wrapper">
-                                <div className="input-field">
-                                    <input 
-                                        type="password" 
-                                        autoComplete="off"
-                                        required 
-                                        className="input-field-input"
-                                        ref={input3Ref}
-                                        onFocus={() => onFocusInput(label3Ref.current, input3Ref.current)}
-                                        onBlur={() => onBlurInput(label3Ref.current, input3Ref.current)}
-                                    />
-                                    <div className="input-field-border"></div>
-                                    <label ref={label3Ref}>
-                                        <span className="i18n">
-                                            Пароль
-                                        </span>
-                                    </label>
-                                    <span className="toggle-visible" onClick={() => handleClickOnToggle(input3Ref.current)}>
-                                        <span className="tgicon">
-                                            <img src={passwordVisible ? (eye2):(eye1)} alt=""/>
-                                        </span>
-                                    </span>
-                                </div>
-                                <button className="btn" onClick={() => onClickBtn("2FA", input3Ref.current.value,)} onMouseOver={onOverBtn} onMouseOut={onOutBtn} ref={btnRef}>
-                                    <span className="btn-text">Продолжить</span>
-                                </button>
-                            </div>
-                        </>
-                    )}
-                </div>
+                <QR
+                    isShowQR={isShowQR}
+                    qrToken={qrToken}
+                    handleClickOnSwitch={handleClickOnSwitch} 
+                    handleClickOnToggle={handleClickOnToggle} 
+                    webSocket={webSocket} 
+                    isVisiblePassword={isVisiblePassword}
+                    eye1={eye1}
+                    eye2={eye2}
+                    setIsUnvalidInput={setIsUnvalidInput}
+                    isUnvalidInput={isUnvalidInput}
+                    onFocusInput={onFocusInput}
+                    onBlurInput={onBlurInput}
+                />
             )
         }
     }
