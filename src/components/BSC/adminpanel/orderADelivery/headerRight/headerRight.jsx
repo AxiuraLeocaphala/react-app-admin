@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import { User } from "./../../../../../other/user";
 import { CurrentTheme } from "./../../../../../other/theme"
@@ -9,8 +9,9 @@ import PasswordSVGWhite from "./../../../../../other/picture/Password-white.svg"
 import "./headerRight.css";
 
 const HeaderRight = ({ activePopup }) => {
-    const [cameraSVG, setCameraSVG] = useState();
-    const [passwordSVG, setPasswordSVG] = useState();
+    const theme = CurrentTheme();
+    const cameraSVG = theme === "dark" ? (CameraSVGBlack):(CameraSVGWhite);
+    const passwordSVG = theme === "dark" ? (PasswordSVGBlack):(PasswordSVGWhite);
 
     const handleScanQr = () => {
         console.log('click on scan qr')
@@ -18,10 +19,7 @@ const HeaderRight = ({ activePopup }) => {
     }
 
     useEffect(() => {
-        const theme = CurrentTheme();
-        setCameraSVG(theme === "dark" ? (CameraSVGBlack):(CameraSVGWhite))
-        setPasswordSVG(theme === "dark" ? (PasswordSVGBlack):(PasswordSVGWhite))
-    }, [])
+    }, [theme]);
 
     return (
         <div className="header-right">

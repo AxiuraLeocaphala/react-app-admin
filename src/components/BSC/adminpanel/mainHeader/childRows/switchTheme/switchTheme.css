@@ -4,7 +4,7 @@
     .switch-wrapper {
         border: 1px solid var(--background);
         position: relative;
-        width: 10%;
+        width: 60px;
         height: 24px;
         border-radius: 14px;
         cursor: pointer;

@@ -30,9 +30,11 @@
 
 	/* phone */
 	--width-surface-header-phone: 100%;
+	--width-error-container-phone: 100%;
 
 	/* pc */
 	--width-surface-header-pc: 640px;
+	--width-error-container-pc: 400px;
 }
 
 [data-theme='light'] {
@@ -66,11 +68,13 @@
 }
 
 [user-agent="phone"] {
-	--width-surface-header: var(--width-surface-header-phone)
+	--width-surface-header: var(--width-surface-header-phone);
+	--width-error-container: var(--width-error-container-phone)
 }
 
 [user-agent="pc"] {
-	--width-surface-header: var(--width-surface-header-pc)
+	--width-surface-header: var(--width-surface-header-pc);
+	--width-error-container: var(--width-error-container-pc)
 }
 
 body {

@@ -1,21 +1,22 @@
 import { useState } from "react";
+
 import { CurrentTheme } from "./../../../../../../other/theme";
 import { setCookie } from "./../../../../../../other/cookie";
 import "./switchTheme.css";
 
 const SwitchTheme = () => {
-    const [isLightTheme, setLightTheme] = useState(CurrentTheme() === "light" ? true:false);
+    const [isDarkTheme, setIsDarkTheme] = useState(CurrentTheme() === "dark" ? true:false)
 
-    const handleClickSwitch1 = () => {
-        setLightTheme(prevState => !prevState);
-        document.documentElement.setAttribute("data-theme", isLightTheme ? "dark":"light");
-        setCookie("them", isLightTheme ? "dark":"light")
+    const handleClickSwitch = () => {
+        document.documentElement.setAttribute("data-theme", isDarkTheme ? "light":"dark");
+        setCookie("theme", isDarkTheme ? "light":"dark")
+        setIsDarkTheme(prevState => !prevState);
     }
 
     return (
         <div className="row switch-theme">
             Светлая тема 
-            <div className={`switch-wrapper ${isLightTheme ? "on":"off"}`} onClick={handleClickSwitch1}>
+            <div className={`switch-wrapper ${isDarkTheme ? "off":"on"}`} onClick={handleClickSwitch}>
                 <div className='switch'></div>
             </div>
         </div>

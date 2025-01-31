@@ -4,15 +4,18 @@ import { useMainContext } from "../../context/mainContext";
 import OrderConfirm from './orderConfirm/orderConfirm';
 import OrderAssembly from "./orderAssembly/orderAssembly";
 import OrderADelivery from "./orderADelivery/orderADelivery";
+import ErrorElement from "../../ErrorElement/ErrorElement";
 import "./style/adminpanel.css";
 import "./style/commonOrder.css";
 
 const AdminPanel = () => {
     const [listOrders, setListOrders] = useState(null);
+    const [isShowError, setIsShowError] = useState(false);
+    const [error, setError] = useState(false);
     const { 
         webSocket, SetVisibilityState, SetArrayWorkers, 
         AddNewWorker, SetLoginPassword, SetStateLoading,
-        view, SetPriceList, SetCreationOrders,
+        view, SetPriceList, UpdatePriceList, SetCreationOrders,
         SetErrMsgADeliveryPopup, SetTargetOrderADeliveryPopup, SetErrMsgShowADeliveryPopup
     } = useMainContext();
     
@@ -175,6 +178,16 @@ const AdminPanel = () => {
                     case "getPriceList":
                         SetPriceList(req.priceList)
                         break;
+                    case "updatePriceList":
+                        UpdatePriceList(req.updatePriceList);
+                        break;
+                    case "error":
+                        setError(req.errorMsg);
+                        setIsShowError(true);
+                        setTimeout(() => {
+                            setIsShowError(false);
+                        }, 4000);
+                        break;
                     default:
                         console.log("unknow contentType");
                         break;
@@ -194,6 +207,9 @@ const AdminPanel = () => {
                 )}
                 {["ADelivery", "GeneralView"].includes(view) && (
                     <OrderADelivery listOrders={listOrders}/>
+                )}
+                {isShowError && (
+                    <ErrorElement error={error}/>
                 )}
             </div>
         )

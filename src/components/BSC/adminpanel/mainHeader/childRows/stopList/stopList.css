@@ -33,7 +33,7 @@
     .header-table {
         display: grid;
         grid-template-columns: 0.2fr 1.5fr 0.5fr;
-        margin: 10px 6px 0;
+        margin: 25px 6px 0;
         border-bottom: 1px solid rgb(170, 170, 170);
     }
     .hdr-state, .hdr-name, .hdr-max {
@@ -50,4 +50,48 @@
     .priceList::-webkit-scrollbar-thumb {
         background-color: rgb(170, 170, 170);
     }
+    .response-block {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 2rem;
+        font-weight: 400;
+        .spoiler-container {
+            position: relative;
+            overflow: hidden; 
+            .shine {
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 0;
+                height: 100%;
+                box-shadow: 1px 1px 15px 20px rgba(255, 255, 255, 0.9);
+                transform: skewX(-10deg);
+                animation: animations 3s infinite;
+                z-index: 1;
+            }
+            .spoiler {
+                border-radius: 5px;
+                color: var(--background-secondary);
+                background-color: var(--background-secondary);
+            }
+        }
+        .loaderbar {
+            width: 100%;
+            height: 4px;
+            background-color: var(--background-secondary);
+            border-radius: 2px; 
+            animation: loaderbar 3s linear forwards;
+        }
+    }
 } 
+
+@keyframes loaderbar {
+    from {
+        width: 100%;
+    }
+    to {
+        width: 0%;
+    }
+}

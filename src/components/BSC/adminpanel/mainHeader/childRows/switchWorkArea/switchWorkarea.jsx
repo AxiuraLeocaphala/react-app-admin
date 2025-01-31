@@ -1,4 +1,4 @@
-import { useMainContext } from "./../../../../../context/mainContext";
+import { useMainContext } from "../../../../../context/mainContext";
 import "./switchWorkarea.css";
 
 const SwitchWorkarea = () => {

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+
 import SwitchTheme from "./childRows/switchTheme/switchTheme";
 import SwitchWorkarea from "./childRows/switchWorkArea/switchWorkarea";
 import Workers from "./childRows/workers/workers";
@@ -8,7 +9,7 @@ import FormAddChangeWorker from "./AddChangeWorker/formAddChangeWorker";
 import "./mainHeader.css";
 
 const MainHeader = () => {
-    const [isExpanded, setExpanded] = useState(true);
+    const [isExpanded, setExpanded] = useState(false);
     const [showFormAddChangeWorker, setShowAddChangeWorker] = useState(false);
     const [workerInfo, setWorkerInfo] = useState();
 

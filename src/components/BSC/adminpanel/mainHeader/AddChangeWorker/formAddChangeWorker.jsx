@@ -25,14 +25,19 @@ const FormAddChangeWorker = ({ visibleFormAddChangeWorker, workerInfo, setWorker
         setIsLoadingNewChangeWorker(true);
         setHeight(`${formWrapperRef.current.getBoundingClientRect().height}px`);
         if (!isChange) {
-            webSocket.send(JSON.stringify({
-                contentType: "addWorker",
-                firstName: e.target.elements["firstName"].value,
-                secondName: e.target.elements["secondName"].value,
-                role: e.target.elements["role"].value,
-                phoneNumber: e.target.elements["phoneNumber"].value
-            }));
-            setIsShowForm(false);
+            if (isChangedInfo) {
+                webSocket.send(JSON.stringify({
+                    contentType: "addWorker",
+                    firstName: e.target.elements["firstName"].value,
+                    secondName: e.target.elements["secondName"].value,
+                    role: e.target.elements["role"].value,
+                    phoneNumber: e.target.elements["phoneNumber"].value
+                }));
+                setIsShowForm(false);
+            } else {
+                setIsShowWarning(true);
+                setTimeout(() => setIsShowWarning(false), 2500);
+            }
         } else {
             if (isChangedInfo) {
                 webSocket.send(JSON.stringify({
@@ -54,6 +59,7 @@ const FormAddChangeWorker = ({ visibleFormAddChangeWorker, workerInfo, setWorker
                 setIsShowForm(false);
             } else {
                 setIsShowWarning(true);
+                setTimeout(() => setIsShowWarning(false), 2500);
             }
         }
     }
@@ -83,9 +89,6 @@ const FormAddChangeWorker = ({ visibleFormAddChangeWorker, workerInfo, setWorker
                 <img src={arrow} alt="" />
             </div>
             <h4>{isChange ? ("Изменить информацию"):("Новый сотрудник")}</h4>
-            {isShowWarning && (
-                <label className="warning">Внесите изменения или закройте форму</label>
-            )}
             {isShowForm ? (
                 <form onSubmit={addChangeWorker}>
                     <section>
@@ -168,7 +171,13 @@ const FormAddChangeWorker = ({ visibleFormAddChangeWorker, workerInfo, setWorker
                             </div>
                         </article>
                     </section>
-                    <button className={isChange && ("change")}>{isChange ? ("Изменить"):("Добавить")}</button>
+                    <button className={isChange && ("change")}>
+                        {isChange ? (
+                            !isShowWarning ? ("Изменить"):("Внесите изменения или закройте форму")
+                        ):(
+                            !isShowWarning ? ("Добавить"):("Внесите изменения или закройте форму")
+                        )}
+                    </button>
                 </form>
             ):(
                 <div className="response-block">

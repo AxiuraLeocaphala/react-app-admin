@@ -5,6 +5,6 @@ export function CurrentTheme() {
         return "dark";
     } else {
         setCookie("theme", "light");
-        return "dark";
+        return "light";
     }
 } 
