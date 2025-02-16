@@ -11,16 +11,6 @@ const PopupCheckCodeReceive = ({ activePopup, columnRef }) => {
         SetErrMsgADeliveryPopup, errMsgADeliveryPopup, 
     } = useMainContext();
 
-    useEffect(() => {
-        setPositionOverlay(columnRef.current.scrollTop);
-        columnRef.current.style.overflow = "hidden";
-        setTimeout(() => {overlayRef.current.classList.remove('hide')}, 50) 
-        setTimeout(() => {
-            inputRef.current.focus()
-            overlayRef.current.addEventListener('click', handleClickOverlay);
-        }, 150);
-    }, [])
-
     const handleClickOverlay = (e) => {
         if (e.target.closest('.popupCheckCodeReceive') === null) {
             overlayRef.current.classList.add('hide');
@@ -42,6 +32,16 @@ const PopupCheckCodeReceive = ({ activePopup, columnRef }) => {
             SetErrMsgShowADeliveryPopup(true);
         }
     }
+    
+    useEffect(() => {
+        setPositionOverlay(columnRef.current.scrollTop);
+        columnRef.current.style.overflow = "hidden";
+        setTimeout(() => {overlayRef.current.classList.remove('hide')}, 50) 
+        setTimeout(() => {
+            inputRef.current.focus()
+            overlayRef.current.addEventListener('click', handleClickOverlay);
+        }, 150);
+    }, [])
 
     return (
         <div ref={overlayRef} className="overlay hide" style={{top: `${positionOverlay}px`}}>

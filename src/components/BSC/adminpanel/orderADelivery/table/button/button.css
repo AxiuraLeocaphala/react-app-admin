@@ -4,7 +4,7 @@
             width: 100%;
         }
         button.active {
-            color: var(--on-primary);
+            color: var(--on-surface);
             background-color: rgba(16, 168, 97, 0.929);
         }
     }

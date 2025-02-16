@@ -1,10 +1,10 @@
 import { getCookie, setCookie } from "./cookie";
 
 export function CurrentTheme() {
-    if(getCookie("theme") === "dark") {
-        return "dark";
-    } else {
-        setCookie("theme", "light");
+    if(getCookie("theme") === "light") {
         return "light";
+    } else {
+        setCookie("theme", "dark");
+        return "dark";
     }
-} 
+}

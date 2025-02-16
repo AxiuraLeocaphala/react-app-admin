@@ -58,7 +58,7 @@ const Authenticate = () => {
         
             webSocket.onopen = e => {
                 if (!isShowLogin) {
-                    webSocket.send(JSON.stringify({"contentType": "qr"}));
+                    webSocket.send(JSON.stringify({"contentType": "QR"}));
                 }
                 setIsOpenWS(true);
             }
@@ -72,10 +72,7 @@ const Authenticate = () => {
 
     const handleClickOnSwitch = () => {
         if (isShowLogin) {
-            webSocket.send(JSON.stringify({"contentType": "qr"}));
-        } else {
-            // НЕ CLOSE 
-            webSocket.send(JSON.stringify({"contentType": "close"}));
+            webSocket.send(JSON.stringify({"contentType": "QR"}));
         }
         setIsShowLogin(prevState => !prevState);
     }

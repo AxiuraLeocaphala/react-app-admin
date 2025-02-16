@@ -20,12 +20,22 @@ export const MainProvider = ({ children, url }) => {
     // eslint-disable-next-line
     const [workers, setWorkers] = useState([]);
     
-    useEffect(() => {
-        const ws = new WebSocket(url);
-        setWebSocket(ws);
 
-        ws.onclose = () => {
-            ws.onopen = ws.onclose = ws.onmessage = ws.onerror = null;
+    let flag = true
+    useEffect(() => {
+        if (flag) {
+            const ws = new WebSocket(url);
+            setWebSocket(ws);
+    
+            ws.onclose = () => {
+                ws.onopen = ws.onclose = ws.onmessage = ws.onerror = null;
+            }
+
+            ws.onerror = error => {
+                console.error(error)
+            }
+            
+            flag = false
         }
     }, [url])
 
@@ -114,6 +124,7 @@ export const MainProvider = ({ children, url }) => {
             {
                 webSocket, 
                 SetVisibilityState,
+                setVisibilityState,
                 visibilityState,
                 SetArrayWorkers,
                 workers,

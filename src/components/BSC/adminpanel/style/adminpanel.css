@@ -41,36 +41,6 @@
                     background-color: var(--primary-variant3);
                 }
             }
-            .header-right {
-                position: fixed;
-                display: flex;
-                justify-content: flex-end;
-                width: 100%;
-                height: 2.2rem;
-                transform: rotate(-90deg) scaleY(-1);
-                transform-origin: bottom right;
-                right: 2.2rem;
-                z-index: 2;
-                cursor: pointer;
-                .wrapper-fringe {
-                    width: 30%;
-                    margin: 0 10px;
-                    .fringe {
-                        width: 100%;
-                        height: 100%;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        border-radius: 0 0 10px 10px;
-                        background-color: var(--on-surface);
-                        img {
-                            width: auto;
-                            max-width: 100%;
-                            height: 100%;
-                        }
-                    }
-                }
-            }
         }
     }
 }

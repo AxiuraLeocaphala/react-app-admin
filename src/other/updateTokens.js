@@ -13,7 +13,6 @@ export function ScheduleRefreshTokens(timerRef) {
 }
 
 export async function RefreshTokens(timerRef) {
-    console.log('refresh');
     const refreshToken = getCookie('refreshTokenAdmin');
 
     axios.post('http://127.0.0.1:3003/auth/refreshTokens', {

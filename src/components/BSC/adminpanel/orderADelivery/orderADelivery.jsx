@@ -11,9 +11,10 @@ const OrderADelivery = ({ listOrders }) => {
     const columnRef = useRef();
     const orderList = useRef();
     const [isPopupShow, setIsPopupShow] = useState(false);
-    const { view, targetOrderADeliveryPopup } = useMainContext();
+    const { view, targetOrderADeliveryPopup, visibilityState } = useMainContext();
 
     const activePopup = () => {
+        // if (!isPopupShow && Object.keys(visibilityState).length > 0) throw new Error("Подтвердите выдачу заказа")
         setIsPopupShow(prevState => !prevState);
     }
 
@@ -23,12 +24,13 @@ const OrderADelivery = ({ listOrders }) => {
             orderList.current.scrollTo({
                 top: targetOrderADeliveryPopup.offsetTop - 60,
                 behavior: 'smooth'
-            })
+            });
+            setIsPopupShow(false);
         }
     }, [targetOrderADeliveryPopup])
 
     return (
-        <div className="column-wrapper">
+        <div className={`column-wrapper await-delivery ${view !== "ADelivery" && ("margin-right")}`}>
             {view === "ADelivery" && (<MainHeader/>)}
             <div className="column" ref={columnRef}>
                 <div className="column-header">

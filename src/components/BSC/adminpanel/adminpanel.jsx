@@ -7,6 +7,7 @@ import OrderADelivery from "./orderADelivery/orderADelivery";
 import ErrorElement from "../../ErrorElement/ErrorElement";
 import "./style/adminpanel.css";
 import "./style/commonOrder.css";
+import Product from "./mainHeader/childRows/stopList/product/product";
 
 const AdminPanel = () => {
     const [listOrders, setListOrders] = useState(null);
@@ -16,7 +17,8 @@ const AdminPanel = () => {
         webSocket, SetVisibilityState, SetArrayWorkers, 
         AddNewWorker, SetLoginPassword, SetStateLoading,
         view, SetPriceList, UpdatePriceList, SetCreationOrders,
-        SetErrMsgADeliveryPopup, SetTargetOrderADeliveryPopup, SetErrMsgShowADeliveryPopup
+        SetErrMsgADeliveryPopup, SetTargetOrderADeliveryPopup, SetErrMsgShowADeliveryPopup, 
+        setVisibilityState
     } = useMainContext();
     
     useEffect(() => {
@@ -143,6 +145,10 @@ const AdminPanel = () => {
                                 ...prevListOrders,
                                 ADelivery: updateADelivery
                             }
+                        })
+                        setVisibilityState(prevState => {
+                            delete prevState[req.data.orderId]
+                            return prevState;
                         })
                         break;
                     case "changeStateCreationOrders":
