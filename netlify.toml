@@ -1,7 +1,0 @@
-[[headers]]
-    for = "/*"
-    [headers.values]
-        X-Frame-Options = "*"
-        X-XSS-Protection = "1; mode=block"
-        X-Content-Type-Options = "nosniff"
-        Content-Security-Policy = "default-src 'self' app.netlify.com; frame-ancestors https://web.telegram.org/; script-src 'self' https://telegram.org/js/telegram-web-app.js; connect-src http://127.0.0.1:3002 http://127.0.0.1:3003; img-src 'self' data:; style-src 'self' 'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU='"
