@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider, redirect } from 'react-router-dom';
-import Authenticate from './components/authenticate/authenticate';
-import ErrorElement from './components/ErrorElement/ErrorElement';
-import BaseStartupComponent from './components/BSC/baseStartupComponent';
-import { getCookie } from './other/cookie';
-import { MainProvider } from './components/context/mainContext';
-import "./App.css";
+import Authenticate from './components/authenticate/authenticate.jsx';
+import ErrorElement from './error/ErrorElement.jsx';
+import BaseStartupComponent from './components/adminpanel/baseStartupComponent.jsx';
+import { getCookie } from './utils/cookie.js';
+import { MainProvider } from './context/mainContext.js';
+import "./style/App.css";
 
 const router = createBrowserRouter([
 	{

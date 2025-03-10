@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import LP from "./LP/loginPassword";
-import QR from "./QR/qrCode";
-import { useMainContext } from "./../context/mainContext";
-import { CurrentTheme } from "./../../other/theme"; 
-import { setCookie } from "../../other/cookie";
-import QualifierError from '../../other/_qualifierError'
-import eye1 from './../../other/picture/eye1.svg';
-import eye2 from './../../other/picture/eye2.svg';
-import "./authenticate.css";
+import LP from "./loginPassword";
+import QR from "./qrCode";
+import { useMainContext } from "./../../context/mainContext.js";
+import { CurrentTheme } from "./../../utils/theme.js"; 
+import { setCookie } from "./../../utils/cookie.js";
+import QualifierError from './../../error/_qualifierError.js'
+import eye1 from './../../assets/images/eye1.svg';
+import eye2 from './../../assets/images//eye2.svg';
+import "./../../style/authenticate.css";
 
 const Authenticate = () => {
     const { webSocket } = useMainContext();
