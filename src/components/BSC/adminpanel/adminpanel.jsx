@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 
 import { useMainContext } from "../../context/mainContext";
+import { setCookie } from "../../../other/cookie";
 import OrderConfirm from './orderConfirm/orderConfirm';
 import OrderAssembly from "./orderAssembly/orderAssembly";
 import OrderADelivery from "./orderADelivery/orderADelivery";
 import ErrorElement from "../../ErrorElement/ErrorElement";
+
 import "./style/adminpanel.css";
 import "./style/commonOrder.css";
-import Product from "./mainHeader/childRows/stopList/product/product";
 
 const AdminPanel = () => {
     const [listOrders, setListOrders] = useState(null);
@@ -18,7 +19,7 @@ const AdminPanel = () => {
         AddNewWorker, SetLoginPassword, SetStateLoading,
         view, SetPriceList, UpdatePriceList, SetCreationOrders,
         SetErrMsgADeliveryPopup, SetTargetOrderADeliveryPopup, SetErrMsgShowADeliveryPopup, 
-        setVisibilityState
+        setVisibilityState, setShutdownTime
     } = useMainContext();
     
     useEffect(() => {
@@ -29,6 +30,8 @@ const AdminPanel = () => {
                     case "listOrders":
                         setListOrders({oConfirmation: req.oConfirmation, oAssembly: req.oAssembly, ADelivery: req.ADelivery});
                         SetCreationOrders(req.stateCreatinonOrder);
+                        setCookie(req.role);
+                        setShutdownTime(req.shutdownTime)
                         break;
                     case "newOrder":
                         setListOrders(prevListOrders => {
@@ -153,6 +156,9 @@ const AdminPanel = () => {
                         break;
                     case "changeStateCreationOrders":
                         SetCreationOrders(req.data.newStateCreationOrders);
+                        break;
+                    case "changeShutdownTime":
+                        setShutdownTime(req.data.shutdownTime);
                         break;
                     case "getWorkers":
                         SetArrayWorkers(req.admins);

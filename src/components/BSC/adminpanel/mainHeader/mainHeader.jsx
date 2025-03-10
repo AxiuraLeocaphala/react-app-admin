@@ -6,12 +6,15 @@ import Workers from "./childRows/workers/workers";
 import StopList from "./childRows/stopList/stopList";
 import SwitchReceive from "./childRows/switchReceive/switchReceive";
 import FormAddChangeWorker from "./AddChangeWorker/formAddChangeWorker";
+import TimeAcceptanceOrder from "./childRows/timeAcceptanceOrder/timeAcceptanceOrder";
+import { getCookie } from '../../../../other/cookie';
 import "./mainHeader.css";
 
 const MainHeader = () => {
     const [isExpanded, setExpanded] = useState(false);
     const [showFormAddChangeWorker, setShowAddChangeWorker] = useState(false);
     const [workerInfo, setWorkerInfo] = useState();
+    const role = getCookie("roleWorker")
 
     const visibleFormAddChangeWorker = (workerInfo) => {
         setShowAddChangeWorker(prevState => !prevState);
@@ -31,9 +34,14 @@ const MainHeader = () => {
                         {showFormAddChangeWorker && (
                             <FormAddChangeWorker visibleFormAddChangeWorker={visibleFormAddChangeWorker} workerInfo={workerInfo} setWorkerInfo={setWorkerInfo}/>
                         )}
-                        <StopList/>
-                        <Workers visibleFormAddChangeWorker={visibleFormAddChangeWorker}/>
-                        <SwitchReceive/>
+                        {role === "admin" && (
+                            <>
+                                <StopList/>
+                                <TimeAcceptanceOrder/>
+                                <Workers visibleFormAddChangeWorker={visibleFormAddChangeWorker}/>
+                                <SwitchReceive/>
+                            </>
+                        )}
                         <SwitchTheme/>
                         <SwitchWorkarea/>
                     </>

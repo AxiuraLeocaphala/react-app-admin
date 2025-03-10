@@ -17,6 +17,7 @@ export const MainProvider = ({ children, url }) => {
     const [password, setPassword] = useState();
     const [isLoadingNewWorker, setIsLoadingNewChangeWorker] = useState();
     const [isLoadingChangesPriceList, setIsLoadingChangesPriceList] = useState();
+    const [shutdownTime, setShutdownTime] = useState();
     // eslint-disable-next-line
     const [workers, setWorkers] = useState([]);
     
@@ -150,6 +151,8 @@ export const MainProvider = ({ children, url }) => {
                 errMsgADeliveryPopup,
                 setIsLoadingChangesPriceList,
                 isLoadingChangesPriceList,
+                setShutdownTime,
+                shutdownTime, 
             }
         }>
             {children}

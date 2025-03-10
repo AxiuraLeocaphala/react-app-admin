@@ -35,8 +35,9 @@ const Authenticate = () => {
                         setIsUnvalidInput(true)
                     } else if (data.stat === true) {
                         webSocket.send(JSON.stringify({"contentType": "close"}))
-                        setCookie("accessTokenAdmin", data.accessToken, {'max-age': 14400});
-                        setCookie("refreshTokenAdmin", data.refreshToken, {'max-age': 14400});
+                        setCookie("accessTokenAdmin", data.accessToken, {'max-age': 43200});
+                        setCookie("refreshTokenAdmin", data.refreshToken, {'max-age': 43200});
+                        setCookie('roleWorker', data.role, {'max-age': 43200});
                         navigate('/adminpanel', {state: {accessToken: data.accessToken}});
                     } else {
                         setIsShowQR(false);
@@ -44,8 +45,9 @@ const Authenticate = () => {
                 } else if (data.contentType === "LP") {
                     if (data.stat === true) {
                         webSocket.send(JSON.stringify({"contentType": "close"}))
-                        setCookie("accessTokenAdmin", data.accessToken, {'max-age': 14400});
-                        setCookie("refreshTokenAdmin", data.refreshToken, {'max-age': 14400});
+                        setCookie("accessTokenAdmin", data.accessToken, {'max-age': 43200});
+                        setCookie("refreshTokenAdmin", data.refreshToken, {'max-age': 43200});
+                        setCookie('roleWorker', data.role, {'max-age': 43200});
                         navigate('/adminpanel', {state: {accessToken: data.accessToken}});
                     } else if (data.stat === false) {
                         setIsUnvalidInput(true)
